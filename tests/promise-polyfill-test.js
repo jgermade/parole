@@ -36,6 +36,28 @@ describe('promise resolution', function () {
 
     });
 
+    // it("reject uncough", function(done) {
+    //
+    //   assert.throws(function() {
+    //
+    //     $q(function (resolve, reject) {
+    //       reject('foobar');
+    //     })
+    //
+    //     .then(function (value) {
+    //       return 'ok ' + value;
+    //     }).catch(function (reason) {
+    //       throw 'whoops ' + reason;
+    //     })
+    //
+  	// 		.catch(function (reason) {
+    //       throw 'uncough';
+  	// 		});
+    //
+    //   }, Error );
+    //
+    // });
+
 });
 
 describe('promise interception', function () {

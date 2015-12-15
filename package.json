@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jstools/promises-plus#readme",
   "devDependencies": {
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "nitro": "^1.5.41"
   }
 }

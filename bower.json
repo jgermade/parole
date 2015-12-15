@@ -1,7 +1,7 @@
 {
   "name": "promises-q",
   "description": "promise polyfill with add-ons",
-  "main": "dist/promise.js",
+  "main": "dist/promise.min.js",
   "authors": [
     "Jesús Germade <jesus@germade.es>"
   ],
@@ -22,6 +22,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "lib"
   ]
 }
