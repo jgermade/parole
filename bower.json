@@ -1,5 +1,5 @@
 {
-  "name": "promises-plus",
+  "name": "promises-q",
   "description": "promise polyfill with add-ons",
   "main": "dist/promise.js",
   "authors": [

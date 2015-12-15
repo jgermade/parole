@@ -1,8 +1,8 @@
 {
-  "name": "promises-plus",
+  "name": "promise-q",
   "version": "0.1.0",
   "description": "promise polyfill with add-ons",
-  "main": "src/index.js",
+  "main": "lib/promise-q.js",
   "scripts": {
     "test": "$(npm bin)/mocha tests"
   },

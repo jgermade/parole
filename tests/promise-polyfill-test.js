@@ -1,12 +1,12 @@
 
-var Promise = require('../lib/promise-addons')(require('../lib/promise-polyfill'));
+var $q = require('../lib/promise-qizer')(require('../lib/promise-polyfill'));
 var assert = require('assert');
 
 describe('promise resolution', function () {
 
     it("testing resolution", function(done) {
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
@@ -19,7 +19,7 @@ describe('promise resolution', function () {
 
     it("reject resolution", function(done) {
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         reject('foobar');
       })
 
@@ -42,7 +42,7 @@ describe('promise interception', function () {
 
     it("testing interception resolve", function(done) {
 
-	    new Promise(function (resolve, reject) {
+	    $q(function (resolve, reject) {
 	      resolve('foobar');
 	    })
 
@@ -65,7 +65,7 @@ describe('promise interception', function () {
 
     it("testing interception resolve to reject", function(done) {
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('foobar');
       })
 
@@ -88,7 +88,7 @@ describe('promise interception', function () {
 
     it("testing interception reject", function(done) {
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         reject('foobar');
       })
 
@@ -111,7 +111,7 @@ describe('promise interception', function () {
 
     it("testing interception reject to resolve", function(done) {
 
-			new Promise(function (resolve, reject) {
+			$q(function (resolve, reject) {
 	      reject('foobar');
 	    })
 
@@ -134,12 +134,12 @@ describe('promise interception', function () {
 
     it("testing interception resolve returning promise", function(done) {
 
-	    new Promise(function (resolve, reject) {
+	    $q(function (resolve, reject) {
 	      reject('foobar');
 	    })
 
 	    .catch(function (value) {
-	      return new Promise(function (resolve, reject) {
+	      return $q(function (resolve, reject) {
 	        resolve(':)');
 	      });
 	    })
@@ -165,7 +165,7 @@ describe('promise interception', function () {
 //
 //       var result = false;
 //
-//       var promise = new Promise(function (resolve, reject) {
+//       var promise = $q(function (resolve, reject) {
 //         reject('foobar');
 //       })
 //
@@ -192,13 +192,13 @@ describe('promise all', function () {
 
     it("list resolved", function(done) {
 
-      var p = Promise.all([
-        new Promise(function (resolve, reject) {
+      var p = $q.all([
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('foo');
           }, 1);
         }),
-        new Promise(function (resolve, reject) {
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('bar');
           }, 1);
@@ -213,13 +213,13 @@ describe('promise all', function () {
 
     it("list rejected", function(done) {
 
-      Promise.all([
-        new Promise(function (resolve, reject) {
+      $q.all([
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('ok');
           }, 1);
         }),
-        new Promise(function (resolve, reject) {
+        $q(function (resolve, reject) {
           setTimeout(function () {
             reject('whoops');
           }, 1);
@@ -235,8 +235,8 @@ describe('promise all', function () {
 
       var result = false;
 
-      Promise.all([
-        new Promise(function (resolve, reject) {
+      $q.all([
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('foo');
           }, 1);
@@ -253,7 +253,7 @@ describe('promise all', function () {
 
       var result = false;
 
-      Promise.all([
+      $q.all([
         'foo',
         'bar'
       ])
@@ -269,18 +269,18 @@ describe('promise race', function () {
 
     it("resolve", function(done) {
 
-      Promise.race([
-        new Promise(function (resolve, reject) {
+      $q.race([
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('winner');
           }, 1);
         }),
-        new Promise(function (resolve, reject) {
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('second');
           }, 2);
         }),
-        new Promise(function (resolve, reject) {
+        $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('third');
           }, 3);
@@ -296,18 +296,18 @@ describe('promise race', function () {
 
     it("reject", function(done) {
 
-      Promise.race([
-        new Promise(function (resolve, reject) {
+      $q.race([
+        $q(function (resolve, reject) {
           setTimeout(function () {
             reject('winner');
           }, 1);
         }),
-        new Promise(function (resolve, reject) {
+        $q(function (resolve, reject) {
           setTimeout(function () {
             reject('second');
           }, 2);
         }),
-        new Promise(function (resolve, reject) {
+        $q(function (resolve, reject) {
           setTimeout(function () {
             reject('third');
           }, 3);
@@ -329,12 +329,12 @@ describe('promise then', function () {
 
       var result = false;
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
         .then(function (result) {
-          return Promise.resolve(result);
+          return $q.resolve(result);
         })
 
         .then(function (result) {
@@ -348,12 +348,12 @@ describe('promise then', function () {
 
       var result = false;
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
         .then(function (result) {
-          return Promise.reject('whoops!');
+          return $q.reject('whoops!');
         })
 
         .catch(function (result) {
@@ -367,12 +367,12 @@ describe('promise then', function () {
 
       var result = false;
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
         .then(function (result) {
-          return Promise.when(result);
+          return $q.when(result);
         })
 
         .then(function (result) {
@@ -386,12 +386,12 @@ describe('promise then', function () {
 
       var result = false;
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
         .then(function (result) {
-          return Promise.when(result).then(function () {
+          return $q.when(result).then(function () {
             throw 'whoops!';
           })
         })
@@ -403,16 +403,16 @@ describe('promise then', function () {
 
     });
 
-    it("Promise.resolve", function(done) {
+    it("$q.resolve", function(done) {
 
       var result = false;
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
         .then(function (result) {
-          return Promise.resolve(result);
+          return $q.resolve(result);
         })
 
         .then(function (result) {
@@ -422,16 +422,16 @@ describe('promise then', function () {
 
     });
 
-    it("Promise.reject", function(done) {
+    it("$q.reject", function(done) {
 
       var result = false;
 
-      new Promise(function (resolve, reject) {
+      $q(function (resolve, reject) {
         resolve('gogogo!');
       })
 
         .then(function (result) {
-          return Promise.reject('whoops!');
+          return $q.reject('whoops!');
         })
 
         .catch(function (result) {
