@@ -1,0 +1,28 @@
+{
+  "name": "promises-plus",
+  "version": "0.1.0",
+  "description": "promise polyfill with add-ons",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "$(npm bin)/mocha tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jstools/promises-plus.git"
+  },
+  "keywords": [
+    "promise",
+    "polyfill",
+    "add-ons",
+    "when"
+  ],
+  "author": "Jesús Germade <jesus@germade.es>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jstools/promises-plus/issues"
+  },
+  "homepage": "https://github.com/jstools/promises-plus#readme",
+  "devDependencies": {
+    "mocha": "^2.3.4"
+  }
+}

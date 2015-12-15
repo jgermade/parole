@@ -1,0 +1,27 @@
+{
+  "name": "promises-plus",
+  "description": "promise polyfill with add-ons",
+  "main": "dist/promise.js",
+  "authors": [
+    "Jesús Germade <jesus@germade.es>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "promise",
+    "polyfill",
+    "add-ons",
+    "when"
+  ],
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
