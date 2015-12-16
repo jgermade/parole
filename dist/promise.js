@@ -26,39 +26,40 @@ function stepResult(step, value, type) {
   }
 }
 
-function processQueue(queue, err, result) {
-  var len = queue.length,
-      step = queue.shift(),
-      type = err ? 'reject' : 'resolve';
+function processQueue(promise) {
+  if (promise.$$fulfilled === undefined) {
+    return;
+  }
+
+  var len = promise.$$queue.length,
+      step = promise.$$queue.shift(),
+      type = promise.$$fulfilled ? 'resolve' : 'reject',
+      uncough = !promise.$$fulfilled && promise.$$uncought++;
 
   while (step) {
 
     if (step[type]) {
-
-      // if( err ) {
-      //   queue.$$uncough = false;
-      // }
+      uncough = false;
 
       try {
-        stepResult(step, step[type](result), 'resolve');
+        stepResult(step, step[type](promise.$$value), 'resolve');
       } catch (reason) {
         stepResult(step, reason, 'reject');
       }
     } else {
-      stepResult(step, result, type);
+      stepResult(step, promise.$$value, type);
     }
 
-    step = queue.shift();
+    step = promise.$$queue.shift();
   }
 
-  // if( err && queue.$$uncough !== false ) {
-  //   var uncoughSerial = setTimeout(function () {
-  //     if( queue.$$uncough === uncoughSerial ) {
-  //       throw new Error('Uncaught (in promise)');
-  //     }
-  //   }, 0);
-  //   queue.$$uncough = uncoughSerial;
-  // }
+  if (uncough) {
+    setTimeout(function () {
+      if (promise.$$uncough === uncough) {
+        throw new Error('Uncaught (in promise)');
+      }
+    }, 0);
+  }
 }
 
 function Promise(executor) {
@@ -68,15 +69,16 @@ function Promise(executor) {
 
   var p = this;
   this.$$queue = [];
+  this.$$uncough = 0;
 
   executor(function (result) {
     p.$$fulfilled = true;
     p.$$value = result;
-    processQueue(p.$$queue, false, result);
+    processQueue(p);
   }, function (reason) {
     p.$$fulfilled = false;
     p.$$value = reason;
-    processQueue(p.$$queue, true, reason);
+    processQueue(p);
   });
 }
 
@@ -86,9 +88,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
     _this.$$queue.push({ resolve: onFulfilled, reject: onRejected, deferred: { resolve: resolve, reject: reject } });
   });
 
-  if (this.$$fulfilled !== undefined) {
-    processQueue(_this.$$queue, !this.$$fulfilled, this.$$value);
-  }
+  processQueue(this);
 
   return _promise;
 };
