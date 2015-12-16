@@ -23,7 +23,7 @@ git.updateRelease:
 	@git merge --no-edit master
 
 release: build test git.increaseVersion git.updateRelease build
-	@git add dist -all -f
+	@git add dist --all -f
 	git commit -n -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node make pkg:version)\n"
