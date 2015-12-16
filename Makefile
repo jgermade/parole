@@ -3,10 +3,10 @@
 test:
 	npm install
 	$(shell npm bin)/mocha tests
-	node make build
-	$(shell npm bin)/karma start karma.conf.js
 
 build: test
+	node make build
+	$(shell npm bin)/karma start karma.conf.js
 
 master.increaseVersion:
 	git checkout master
