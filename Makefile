@@ -14,6 +14,7 @@ master.increaseVersion:
 	@node make pkg:increaseVersion
 
 git.increaseVersion: master.increaseVersion
+	git add .
 	git commit -a -n -m "increased version [$(shell node make pkg:version)]"
 	@git push origin master
 	npm publish
