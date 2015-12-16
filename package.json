@@ -1,29 +1,29 @@
 {
-  "name": "promise-q",
-  "version": "0.1.1",
-  "description": "promise polyfill with add-ons",
-  "main": "lib/promise-q.js",
-  "scripts": {
-    "test": "$(npm bin)/mocha tests"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/jstools/promises-plus.git"
-  },
-  "keywords": [
-    "promise",
-    "polyfill",
-    "add-ons",
-    "when"
-  ],
-  "author": "Jesús Germade <jesus@germade.es>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jstools/promises-plus/issues"
-  },
-  "homepage": "https://github.com/jstools/promises-plus#readme",
-  "devDependencies": {
-    "mocha": "^2.3.4",
-    "nitro": "^1.5.41"
-  }
+	"name": "promise-q",
+	"version": "0.1.2",
+	"description": "promise polyfill with add-ons",
+	"main": "lib/promise-q.js",
+	"scripts": {
+		"test": "$(npm bin)/mocha tests"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/jstools/promises-plus.git"
+	},
+	"keywords": [
+		"promise",
+		"polyfill",
+		"add-ons",
+		"when"
+	],
+	"author": "Jesús Germade <jesus@germade.es>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/jstools/promises-plus/issues"
+	},
+	"homepage": "https://github.com/jstools/promises-plus#readme",
+	"devDependencies": {
+		"mocha": "^2.3.4",
+		"nitro": "^1.5.41"
+	}
 }

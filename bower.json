@@ -1,28 +1,29 @@
 {
-  "name": "promises-q",
-  "description": "promise polyfill with add-ons",
-  "main": "dist/promise.min.js",
-  "authors": [
-    "Jesús Germade <jesus@germade.es>"
-  ],
-  "license": "MIT",
-  "keywords": [
-    "promise",
-    "polyfill",
-    "add-ons",
-    "when"
-  ],
-  "moduleType": [
-    "amd",
-    "globals"
-  ],
-  "homepage": "",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "lib"
-  ]
+	"name": "promises-q",
+	"description": "promise polyfill with add-ons",
+	"main": "dist/promise.min.js",
+	"authors": [
+		"Jesús Germade <jesus@germade.es>"
+	],
+	"license": "MIT",
+	"keywords": [
+		"promise",
+		"polyfill",
+		"add-ons",
+		"when"
+	],
+	"moduleType": [
+		"amd",
+		"globals"
+	],
+	"homepage": "",
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests",
+		"lib"
+	],
+	"version": "0.1.2"
 }
