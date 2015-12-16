@@ -40,23 +40,20 @@ describe('promise resolution', function () {
 
     // it("reject uncough", function(done) {
     //
-    //   assert.throws(function() {
+    //   assert.throws(function(_done) {
     //
-    //     $q(function (resolve, reject) {
-    //       reject('foobar');
-    //     })
+    //       $q(function (resolve, reject) {
+    //         reject('foobar');
+    //       })
     //
-    //     .then(function (value) {
-    //       return 'ok ' + value;
-    //     }).catch(function (reason) {
-    //       throw 'whoops ' + reason;
-    //     })
+    // 			.catch(function (reason) {
+    //         throw 'uncough';
+    // 			});
     //
-  	// 		.catch(function (reason) {
-    //       throw 'uncough';
-  	// 		});
+    //       setTimeout(_done, 10);
     //
-    //   }, Error );
+    //   });
+    //   }, /Uncaught \(in promise\)/ );
     //
     // });
 
