@@ -30,6 +30,7 @@ release: test git.increaseVersion git.updateRelease build
 	git commit -n -m "updating built versions"
 	@git push origin release
 	@echo "\n\trelease version $(shell node make pkg:version)\n"
+	@git checkout master
 
 # DEFAULT TASKS
 
