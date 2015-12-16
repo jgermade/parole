@@ -1,6 +1,10 @@
 
-var $q = require('../lib/promise-qizer')(require('../lib/promise-polyfill'));
-var assert = require('assert');
+if( typeof require !== 'undefined' ) {
+  var $q = require('../lib/promise-qizer')(require('../lib/promise-polyfill'));
+  var assert = require('assert');
+}
+
+console.log('[[aoahlakjahljkahljkaha]]', assert);
 
 describe('promise resolution', function () {
 

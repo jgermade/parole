@@ -3,9 +3,10 @@
 test:
 	npm install
 	$(shell npm bin)/mocha tests
+	node make build
+	$(shell npm bin)/karma start karma.conf.js
 
 build: test
-	@node make build
 
 master.increaseVersion:
 	git checkout master
@@ -22,7 +23,7 @@ git.updateRelease:
 	@git pull origin release
 	@git merge --no-edit master
 
-release: build test git.increaseVersion git.updateRelease build
+release: build git.increaseVersion git.updateRelease build
 	@git add dist --all -f
 	git commit -n -m "updating built versions"
 	@git push origin release

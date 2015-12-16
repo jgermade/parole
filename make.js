@@ -4,7 +4,7 @@ require('nitro')(function (nitro) {
 
   nitro.task('build', function () {
 
-    nitro.load('lib/promise-q.js')
+    nitro.load('lib/promise-browser.js')
       .process('browserify', {
         plugins: [nitro.require('babelify')]
       })
