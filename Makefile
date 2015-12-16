@@ -25,7 +25,7 @@ git.updateRelease:
 	@git merge --no-edit master
 
 release: build git.increaseVersion git.updateRelease build
-	@git add dist --all -f
+	@git add dist -f --all
 	@git add .
 	git commit -n -m "updating built versions"
 	@git push origin release
