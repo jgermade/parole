@@ -4,8 +4,6 @@ if( typeof require !== 'undefined' ) {
   var assert = require('assert');
 }
 
-console.log('[[aoahlakjahljkahljkaha]]', assert);
-
 describe('promise resolution', function () {
 
     it("testing resolution", function(done) {
