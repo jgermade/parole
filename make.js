@@ -2,6 +2,12 @@
 
 require('nitro')(function (nitro) {
 
+  nitro.task('lint', function () {
+
+    nitro.load('lib/{,**/}*.js').process('eslint');
+
+  });
+
   nitro.task('build', function () {
 
     nitro.load('lib/promise-browser.js')
