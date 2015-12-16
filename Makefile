@@ -9,6 +9,7 @@ build: test
 	$(shell npm bin)/karma start karma.conf.js
 
 master.increaseVersion:
+	git fetch origin
 	git checkout master
 	@git pull origin master
 	@node make pkg:increaseVersion
