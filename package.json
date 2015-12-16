@@ -4,7 +4,7 @@
 	"description": "promise polyfill with add-ons",
 	"main": "lib/promise-q.js",
 	"scripts": {
-		"test": "$(npm bin)/mocha tests && $(npm bin)/karma start karma.conf.js"
+		"test": "node make lint && $(npm bin)/mocha tests && node make build && $(npm bin)/karma start karma.conf.js"
 	},
 	"repository": {
 		"type": "git",
