@@ -1,0 +1,8 @@
+branches:
+  - master
+  - release
+
+build:
+  image: aplazame/nodejs-karma
+  commands:
+    - 'make test'

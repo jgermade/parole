@@ -1,12 +1,17 @@
 # --- promise-q
 
-test:
+npm.install:
 	npm install
+
+test.base: npm.install
 	$(shell npm bin)/mocha tests
 
-build: test
+test: test.base
 	node make build
 	$(shell npm bin)/karma start karma.conf.js
+
+build: test.base
+	node make build
 
 master.increaseVersion:
 	git fetch origin
