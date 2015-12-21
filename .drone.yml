@@ -3,6 +3,6 @@ branches:
   - release
 
 build:
-  image: aplazame/nodejs-karma
+  image: emmenko/nodejs-karma
   commands:
     - 'make test'

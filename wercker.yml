@@ -1,4 +1,4 @@
-box: aplazame/nodejs-karma
+box: emmenko/nodejs-karma
 # Build definition
 build:
   # The steps that will be executed on build
