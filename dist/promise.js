@@ -4,15 +4,15 @@
 if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(['$q'], function () {
-        return require('./promise-q');
+        return require('./q');
     });
 } else {
     // Browser globals
-    global.$q = require('./promise-q');
+    global.$q = require('./q');
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-q":3}],2:[function(require,module,exports){
+},{"./q":3}],2:[function(require,module,exports){
 
 function stepResult(step, value, type) {
   if (value && value.then) {
@@ -158,10 +158,10 @@ module.exports = Promise;
 },{}],3:[function(require,module,exports){
 (function (global){
 
-module.exports = require('./promise-qizer')(global.Promise || require('./promise-polyfill'));
+module.exports = require('./qizer')(global.Promise || require('./promise-polyfill'));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./promise-polyfill":2,"./promise-qizer":4}],4:[function(require,module,exports){
+},{"./promise-polyfill":2,"./qizer":4}],4:[function(require,module,exports){
 
 module.exports = function (Promise) {
 
