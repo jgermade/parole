@@ -315,6 +315,10 @@ describe('promise race', function () {
 
     });
 
+});
+
+describe('promise race', function () {
+
     it("reject", function(done) {
 
       $q.race([
