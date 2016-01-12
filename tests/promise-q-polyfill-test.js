@@ -1,6 +1,6 @@
 
 if( typeof require !== 'undefined' ) {
-  var $q = require('../lib/promise-qizer')(require('../lib/promise-polyfill'));
+  var $q = require('../lib/qizer')(require('../lib/promise-polyfill'));
   var assert = require('assert');
 }
 
@@ -337,7 +337,7 @@ describe('promise race', function () {
 
         .catch(function (reason) {
           assert.equal(reason, 'winner');
-          done();
+          setTimeout(done, 1);
         });
 
     });

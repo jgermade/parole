@@ -1,8 +1,8 @@
 {
 	"name": "q-promise",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "promise polyfill with add-ons",
-	"main": "lib/promise-q.js",
+	"main": "lib/q.js",
 	"scripts": {
 		"test": "node make lint && $(npm bin)/mocha tests && node make build && $(npm bin)/karma start karma.conf.js"
 	},

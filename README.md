@@ -1,14 +1,14 @@
-jsTools: promise-q [![wercker status](https://app.wercker.com/status/776fd083031e0baa85545897a2fc6cfa/s "wercker status")](https://app.wercker.com/project/bykey/776fd083031e0baa85545897a2fc6cfa)
+jsTools: q-promise [![wercker status](https://app.wercker.com/status/776fd083031e0baa85545897a2fc6cfa/s "wercker status")](https://app.wercker.com/project/bykey/776fd083031e0baa85545897a2fc6cfa)
 ==================
-[![](https://img.shields.io/npm/v/promise-q.svg)](https://www.npmjs.com/package/promise-q) [![](https://img.shields.io/bower/v/promise-q.svg)](http://bower.io/search/?q=promise-q) [![](https://img.shields.io/npm/dm/promise-q.svg)](https://www.npmjs.com/package/promise-q)
+[![](https://img.shields.io/npm/v/q-promise.svg)](https://www.npmjs.com/package/q-promise) [![](https://img.shields.io/bower/v/q-promise.svg)](http://bower.io/search/?q=q-promise) [![](https://img.shields.io/npm/dm/q-promise.svg)](https://www.npmjs.com/package/q-promise)
 Installation
 ------------
 ```.sh
-npm install promise-q --save
+npm install q-promise --save
 ```
   or
 ```.sh
-bower install promise-q --save
+bower install q-promise --save
 ```
 Usage
 -----
