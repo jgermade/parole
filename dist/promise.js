@@ -191,8 +191,11 @@ module.exports = function (Promise) {
   q.when = function (p) {
     return p && p.then ? p : Promise.resolve(p);
   };
+  q.usePolyfill = function () {
+    Promise = require('./promise-polyfill');
+  };
 
   return q;
 };
 
-},{}]},{},[1]);
+},{"./promise-polyfill":2}]},{},[1]);
