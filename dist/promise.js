@@ -71,15 +71,21 @@ function Promise(executor) {
   this.$$queue = [];
   this.$$uncough = 0;
 
-  executor(function (result) {
-    p.$$succeeded = true;
-    p.$$value = result;
-    processQueue(p);
-  }, function (reason) {
+  try {
+    executor(function (result) {
+      p.$$succeeded = true;
+      p.$$value = result;
+      processQueue(p);
+    }, function (reason) {
+      p.$$succeeded = false;
+      p.$$value = reason;
+      processQueue(p);
+    });
+  } catch (err) {
     p.$$succeeded = false;
-    p.$$value = reason;
+    p.$$value = err;
     processQueue(p);
-  });
+  }
 }
 
 Promise.prototype.then = function (onsucceeded, onRejected) {
