@@ -82,6 +82,15 @@ function Promise(executor) {
   });
 }
 
+Promise.prototype.defer = function () {
+  var deferred = {};
+  deferred.promise = new Promise(function (resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+};
+
 Promise.prototype.then = function (onsucceeded, onRejected) {
   var _this = this,
       _promise = new Promise(function (resolve, reject) {
@@ -169,7 +178,7 @@ module.exports = function (Promise) {
     return new Promise(executor);
   }
 
-  ['resolve', 'reject', 'all', 'race'].forEach(function (fName) {
+  ['defer', 'resolve', 'reject', 'all', 'race'].forEach(function (fName) {
     q[fName] = Promise[fName];
   });
 
