@@ -3,6 +3,6 @@ branches:
   - release
 
 build:
-  image: markadams/chromium-xvfb
+  image: nitrojs/node-karma:0.4.0
   commands:
     - 'make test'
