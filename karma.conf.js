@@ -26,11 +26,11 @@ module.exports = function(config) {
   };
 
   if(process.env.TRAVIS){
-    configuration.browsers = [ 'Chrome', 'Firefox' ];
+    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
   }
 
   if(process.env.DRONE){
-    configuration.browsers = [ 'Chrome_no_sandbox' ];
+    configuration.browsers = [ 'Chrome' ];
   }
 
   if(process.env.WERCKER){
