@@ -5,4 +5,5 @@ branches:
 build:
   image: nitrojs/node-karma:0.4.1
   commands:
+    - 'start xvfb'
     - 'make test'

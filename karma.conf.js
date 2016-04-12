@@ -26,7 +26,7 @@ module.exports = function(config) {
   };
 
   if(process.env.TRAVIS){
-    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
+    configuration.browsers = [ 'Chrome', 'Firefox' ];
   }
 
   if(process.env.DRONE){
