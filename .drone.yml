@@ -3,6 +3,6 @@ branches:
   - release
 
 build:
-  image: aplazame/nodejs-karma:0.3.3
+  image: markadams/chromium-xvfb
   commands:
     - 'make test'
