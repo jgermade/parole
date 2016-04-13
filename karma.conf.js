@@ -30,7 +30,7 @@ module.exports = function(config) {
   }
 
   if(process.env.DRONE){
-    configuration.browsers = [ 'Firefox' ];
+    configuration.browsers = [ 'Chrome_no_sandbox' ];
   }
 
   if(process.env.WERCKER){
