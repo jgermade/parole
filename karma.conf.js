@@ -30,7 +30,7 @@ module.exports = function(config) {
   }
 
   if(process.env.DRONE){
-    configuration.browsers = [ 'Chrome' ];
+    configuration.browsers = [ 'Firefox' ];
   }
 
   if(process.env.WERCKER){
