@@ -7,5 +7,6 @@ build:
   cache:
     - node_modules
   commands:
+    - 'sudo start xvfb'
     - 'npm install'
     - 'make test'
