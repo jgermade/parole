@@ -4,9 +4,8 @@ branches:
 
 build:
   image: nitrojs/node-karma:0.4.1
+  cache:
+    - node_modules
   commands:
     - 'npm install'
     - 'make test'
-
-cache:
-  - node_modules
