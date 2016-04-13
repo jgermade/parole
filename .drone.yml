@@ -3,7 +3,7 @@ branches:
   - release
 
 build:
-  image: nitrojs/node-karma:0.4.1
+  image: nitrojs/node-karma:0.4.2
   commands:
     - 'npm install'
     - 'make test'
