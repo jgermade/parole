@@ -34,7 +34,7 @@ module.exports = function(config) {
   }
 
   if(process.env.WERCKER){
-    configuration.browsers = [ 'Chrome', 'Firefox' ];
+    configuration.browsers = [ 'Chrome' ];
   }
 
   config.set(configuration);
