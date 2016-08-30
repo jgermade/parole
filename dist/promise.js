@@ -95,7 +95,7 @@ module.exports = function (Promise) {
 		};
 	}
 
-	return Promise
+	return Promise;
 };
 
 },{}],3:[function(require,module,exports){
