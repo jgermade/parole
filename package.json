@@ -24,13 +24,13 @@
 	"homepage": "https://github.com/jstools/promises-plus#readme",
 	"devDependencies": {
 		"chai": "^3.5.0",
-		"karma": "^0.13.22",
+		"karma": "^1.2.0",
 		"karma-chai": "^0.1.0",
-		"karma-chrome-launcher": "^0.2.3",
-		"karma-firefox-launcher": "^0.1.7",
-		"karma-mocha": "^0.2.2",
+		"karma-chrome-launcher": "^2.0.0",
+		"karma-firefox-launcher": "^1.0.0",
+		"karma-mocha": "^1.1.1",
 		"karma-story-reporter": "^0.3.1",
-		"mocha": "^2.4.5",
-		"nitro": "^1.5.74"
+		"mocha": "^3.0.2",
+		"nitro": "^1.9.9"
 	}
 }

@@ -7,7 +7,11 @@ test.base: npm.install
 	$(shell npm bin)/mocha tests
 
 test: test.base
-	node make build
+	@echo "passing node.js tests"
+	$(shell npm bin)/mocha tests
+	@echo "building for browser"
+	@node make build
+	@echo "passing browser tests (karma)"
 	$(shell npm bin)/karma start karma.conf.js
 
 build: test.base
@@ -37,6 +41,8 @@ release: test git.increaseVersion git.updateRelease build
 	@git push origin release
 	@echo "\n\trelease version $(shell node make pkg:version)\n"
 	@git checkout master
+	@echo "creating github release"
+	@node make gh-release
 
 # DEFAULT TASKS
 
