@@ -7,6 +7,8 @@ test.base: npm.install
 	$(shell npm bin)/mocha tests
 
 test: test.base
+	@echo "checking syntax"
+	@node make lint
 	@echo "passing node.js tests"
 	$(shell npm bin)/mocha tests
 	@echo "building for browser"

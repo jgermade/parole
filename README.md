@@ -1,7 +1,8 @@
-q-promise [![](https://img.shields.io/npm/v/q-promise.svg)](https://www.npmjs.com/package/q-promise) [![](https://img.shields.io/bower/v/q-promise.svg)](http://bower.io/search/?q=q-promise) 
+q-promise [![](https://img.shields.io/npm/v/q-promise.svg)](https://www.npmjs.com/package/q-promise) [![](https://img.shields.io/bower/v/q-promise.svg)](http://bower.io/search/?q=q-promise)
 ==================
 [![wercker status](https://app.wercker.com/status/be7db1dae8daa1a31b992c75d8c9cf83/s "wercker status")](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
 [![](https://img.shields.io/npm/dm/q-promise.svg)](https://www.npmjs.com/package/q-promise)
+
 Installation
 ------------
 ```.sh
