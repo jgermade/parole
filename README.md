@@ -45,3 +45,15 @@ checkpoint 2.1 whoops!
 # elapsed 400ms
 checkpoint 3 all right!
 ```
+
+Build
+-----
+``` sh
+make build
+```
+
+Tests
+-----
+``` sh
+make test
+```

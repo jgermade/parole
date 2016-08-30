@@ -3,6 +3,10 @@ branches:
   - release
 
 build:
-  image: aplazame/nodejs-karma:0.3.0
+  image: nitrojs/node-karma:0.4.1
+  cache:
+    - node_modules
   commands:
+    - 'sudo start xvfb'
+    - 'npm install'
     - 'make test'

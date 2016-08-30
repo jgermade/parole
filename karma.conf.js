@@ -16,7 +16,7 @@ module.exports = function(config) {
     ],
     browsers: [ 'Chrome', 'Firefox' ],
     customLaunchers: {
-      Chrome_travis_ci: {
+      Chrome_no_sandbox: {
         base: 'Chrome',
         flags: ['--no-sandbox']
       }
@@ -26,7 +26,7 @@ module.exports = function(config) {
   };
 
   if(process.env.TRAVIS){
-    configuration.browsers = [ 'Chrome_travis_ci', 'Firefox' ];
+    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
   }
 
   if(process.env.DRONE){
@@ -34,7 +34,7 @@ module.exports = function(config) {
   }
 
   if(process.env.WERCKER){
-    configuration.browsers = [ 'Chrome' ];
+    configuration.browsers = [ 'Chrome', 'Firefox' ];
   }
 
   config.set(configuration);

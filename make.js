@@ -11,9 +11,7 @@ require('nitro')(function (nitro) {
   nitro.task('build', function () {
 
     nitro.load('lib/promise-browser.js')
-      .process('browserify', {
-        plugins: [nitro.require('babelify')]
-      })
+      .process('browserify')
       .writeFile('dist/promise.js')
       .process('uglify')
       .writeFile('dist/promise.min.js');
@@ -34,6 +32,16 @@ require('nitro')(function (nitro) {
     var pkg = require('./package');
     process.stdout.write(pkg[target]);
     process.exit(0);
+  });
+
+  nitro.task('gh-release', function () {
+    nitro.github.release( 'v' + require('./package').version, {
+      branch: 'release',
+      attach: [
+        'dist/promise.js',
+        'dist/promise.min.js'
+      ]
+    });
   });
 
 }).run();
