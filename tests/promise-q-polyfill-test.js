@@ -294,17 +294,17 @@ describe('promise race', function () {
         $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('winner');
-          }, 1);
+          }, 10);
         }),
         $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('second');
-          }, 2);
+          }, 20);
         }),
         $q(function (resolve, reject) {
           setTimeout(function () {
             resolve('third');
-          }, 3);
+          }, 30);
         })
       ])
 
@@ -325,17 +325,17 @@ describe('promise race', function () {
         $q(function (resolve, reject) {
           setTimeout(function () {
             reject('winner');
-          }, 1);
+          }, 10);
         }),
         $q(function (resolve, reject) {
           setTimeout(function () {
             reject('second');
-          }, 2);
+          }, 20);
         }),
         $q(function (resolve, reject) {
           setTimeout(function () {
             reject('third');
-          }, 3);
+          }, 30);
         })
       ])
 
