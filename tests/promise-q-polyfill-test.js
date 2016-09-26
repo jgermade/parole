@@ -1,6 +1,6 @@
 
 if( typeof require !== 'undefined' ) { // if is nodejs (not browser)
-  var $q = require('../lib/qizer')(require('../lib/promise-polyfill'));
+  var $q = require('../lib/qizer')( require('../lib/promise-polyfill') );
   var assert = require('assert');
 }
 

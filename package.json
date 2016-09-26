@@ -1,6 +1,6 @@
 {
 	"name": "q-promise",
-	"version": "0.3.5",
+	"version": "0.3.7",
 	"description": "promise polyfill with add-ons",
 	"main": "lib/q.js",
 	"scripts": {
