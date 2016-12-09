@@ -1,11 +1,11 @@
 
-# q-promise [![](https://img.shields.io/npm/v/q-promise.svg)](https://www.npmjs.com/package/q-promise) [![](https://img.shields.io/bower/v/q-promise.svg)](http://bower.io/search/?q=q-promise)
+# q-promise
 
 [<img src="https://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo" title="Promises/A+ 1.0 compliant" align="right" />](https://promisesaplus.com/)
 
 Another ES6 promise implementation ([compliant](https://github.com/promises-aplus/promises-tests) with [Promises/A+](https://github.com/promises-aplus/promises-spec))
 
-[![Build Status](https://travis-ci.org/jstools/q-promise.svg?branch=master)](https://travis-ci.org/jstools/q-promise) [![](https://img.shields.io/npm/dm/q-promise.svg)](https://www.npmjs.com/package/q-promise)
+[![](https://img.shields.io/npm/v/q-promise.svg)](https://www.npmjs.com/package/q-promise) [![](https://img.shields.io/bower/v/q-promise.svg)](http://bower.io/search/?q=q-promise) [![Build Status](https://travis-ci.org/jstools/q-promise.svg?branch=master)](https://travis-ci.org/jstools/q-promise) [![](https://img.shields.io/npm/dm/q-promise.svg)](https://www.npmjs.com/package/q-promise)
 
 ## Installation
 ```.sh
