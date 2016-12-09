@@ -25,6 +25,7 @@
   "homepage": "https://github.com/jstools/q-promise#readme",
   "devDependencies": {
     "chai": "^3.5.0",
+    "eslint": "^3.11.1",
     "karma": "^1.2.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.0.0",
@@ -33,6 +34,7 @@
     "karma-story-reporter": "^0.3.1",
     "mocha": "^3.0.2",
     "nitro": "^1.10.8",
-    "promises-aplus-tests": "^2.1.2"
+    "promises-aplus-tests": "^2.1.2",
+    "uglify-js": "^2.7.5"
   }
 }
