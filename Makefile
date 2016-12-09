@@ -1,51 +1,56 @@
 # --- promise-q
 
-npm.install:
+install:
 	npm install
 
-test.base: npm.install
-	$(shell npm bin)/mocha tests
+min:
+	@echo "minified version"
+	@$(shell npm bin)/uglifyjs q.js -o q.min.js -c -m
 
-test: test.base
+lint:
 	@echo "checking syntax"
-	@node make lint
-	@echo "passing node.js tests"
-	$(shell npm bin)/mocha tests
-	@echo "building for browser"
-	@node make build
+	@$(shell npm bin)/eslint lib
+
+custom-tests:
+	@echo "passing es6 methods tests"
+	@$(shell npm bin)/mocha tests
+
+promises-aplus-tests: export TEST_JS = normal
+promises-aplus-tests:
+	@echo "passing promises-aplus tests"
+	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
+
+promises-aplus-tests.min: export TEST_JS = min
+promises-aplus-tests.min: min
+	@echo "passing promises-aplus tests"
+	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
+
+karma: export TEST_JS = normal
+karma:
 	@echo "passing browser tests (karma)"
-	$(shell npm bin)/karma start karma.conf.js
+	@$(shell npm bin)/karma start karma.conf.js
 
-build: test.base
-	node make build
+karma.min: export TEST_JS = min
+karma.min: min
+	@echo "passing browser tests (karma)"
+	@$(shell npm bin)/karma start karma.conf.js
 
-master.increaseVersion:
+test: install lint custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
+
+increaseVersion:
 	git fetch origin
 	git checkout master
 	@git pull origin master
 	@node make pkg:increaseVersion
 
-git.increaseVersion: master.increaseVersion
+release: increaseVersion
 	git add .
 	git commit -a -n -m "increased version [$(shell node make pkg:version)]"
 	@git push origin master
 	npm publish
-
-git.updateRelease:
-	git checkout release
-	@git pull origin release
-	@git merge --no-edit master
-
-release: test git.increaseVersion git.updateRelease build
-	@git add dist -f --all
-	@git add .
-	-@git commit -n -m "updating built versions"
-	@git push origin release
-	@echo "\n\trelease version $(shell node make pkg:version)\n"
-	@git checkout master
-	@echo "creating github release"
+	@echo "updating github relase"
 	@node make gh-release
 
 # DEFAULT TASKS
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := min

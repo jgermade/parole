@@ -1,5 +1,9 @@
+/* global process */
+
 module.exports = function(config) {
   'use strict';
+
+  var test_file = process.env.TEST_JS === 'min' ? 'q.min.js' : 'q.js';
 
   var configuration = {
     frameworks: ['mocha', 'chai'],
@@ -11,8 +15,8 @@ module.exports = function(config) {
       'karma-story-reporter'
     ],
     files: [
-      'dist/promise.js',
-      'tests/{,**/}*.js'
+      test_file,
+      'tests/{,**/}*-test.js'
     ],
     browsers: [ 'Chrome', 'Firefox' ],
     customLaunchers: {

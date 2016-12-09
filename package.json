@@ -1,36 +1,38 @@
 {
-	"name": "q-promise",
-	"version": "0.3.7",
-	"description": "promise polyfill with add-ons",
-	"main": "lib/q.js",
-	"scripts": {
-		"test": "node make lint && $(npm bin)/mocha tests && node make build && $(npm bin)/karma start karma.conf.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com/jstools/promises-plus.git"
-	},
-	"keywords": [
-		"promise",
-		"polyfill",
-		"add-ons",
-		"when"
-	],
-	"author": "Jesús Germade <jesus@germade.es>",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/jstools/promises-plus/issues"
-	},
-	"homepage": "https://github.com/jstools/promises-plus#readme",
-	"devDependencies": {
-		"chai": "^3.5.0",
-		"karma": "^1.2.0",
-		"karma-chai": "^0.1.0",
-		"karma-chrome-launcher": "^2.0.0",
-		"karma-firefox-launcher": "^1.0.0",
-		"karma-mocha": "^1.1.1",
-		"karma-story-reporter": "^0.3.1",
-		"mocha": "^3.0.2",
-		"nitro": "^1.9.9"
-	}
+  "name": "q-promise",
+  "version": "1.0.0",
+  "description": "promise polyfill with add-ons",
+  "main": "q.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jstools/q-promise.git"
+  },
+  "keywords": [
+    "promise",
+    "polyfill",
+    "add-ons",
+    "when",
+    "es6"
+  ],
+  "author": "Jesús Germade <jesus@germade.es>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jstools/q-promise/issues"
+  },
+  "homepage": "https://github.com/jstools/q-promise#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "karma": "^1.2.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-mocha": "^1.1.1",
+    "karma-story-reporter": "^0.3.1",
+    "mocha": "^3.0.2",
+    "nitro": "^1.10.8",
+    "promises-aplus-tests": "^2.1.2"
+  }
 }
