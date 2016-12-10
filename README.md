@@ -5,7 +5,7 @@
 
 Another ES6 promise implementation ([compliant](https://github.com/promises-aplus/promises-tests) with [Promises/A+](https://github.com/promises-aplus/promises-spec))
 
-[![](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole) [![](https://img.shields.io/bower/v/parole.svg)](http://bower.io/search/?q=parole) [![Build Status](https://travis-ci.org/jstools/parole.svg?branch=master)](https://travis-ci.org/jstools/parole) [![](https://img.shields.io/npm/dm/parole.svg)](https://www.npmjs.com/package/parole)
+[![](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole) [![](https://img.shields.io/bower/v/parole.svg)](http://bower.io/search/?q=parole) [![Build Status](https://travis-ci.org/jstools/parole.svg?branch=master)](https://travis-ci.org/jstools/parole) 
 
 ## Installation
 ```.sh
