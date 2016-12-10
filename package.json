@@ -1,6 +1,6 @@
 {
   "name": "parole",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Another ES6 promise implementation (compliant with Promises/A+)",
   "main": "parole.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/jstools/parole.git"
+    "url": "git+ssh://git@github.com/kiltjs/parole.git"
   },
   "keywords": [
     "promise",
@@ -20,9 +20,9 @@
   "author": "Jesús Germade <jesus@germade.es>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jstools/parole/issues"
+    "url": "https://github.com/kiltjs/parole/issues"
   },
-  "homepage": "https://github.com/jstools/parole#readme",
+  "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.11.1",

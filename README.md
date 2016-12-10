@@ -5,7 +5,7 @@
 
 Another ES6 promise implementation ([compliant](https://github.com/promises-aplus/promises-tests) with [Promises/A+](https://github.com/promises-aplus/promises-spec))
 
-[![](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole) [![](https://img.shields.io/bower/v/parole.svg)](http://bower.io/search/?q=parole) [![Build Status](https://travis-ci.org/jstools/parole.svg?branch=master)](https://travis-ci.org/jstools/parole) 
+[![](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole) [![](https://img.shields.io/bower/v/parole.svg)](http://bower.io/search/?q=parole) [![Build Status](https://travis-ci.org/kiltjs/parole.svg?branch=master)](https://travis-ci.org/kiltjs/parole)
 
 ## Installation
 ```.sh
@@ -64,8 +64,8 @@ checkpoint 3 all right!
 ```
 
 ### Tests
-[![travis](https://cdn.travis-ci.org/images/favicon-662edf026745110e8203d8cf38d1d325.png)](https://travis-ci.org/jstools/parole)
-[![Build Status](https://travis-ci.org/jstools/parole.svg?branch=master)](https://travis-ci.org/jstools/parole)
+[![travis](https://cdn.travis-ci.org/images/favicon-662edf026745110e8203d8cf38d1d325.png)](https://travis-ci.org/kiltjs/parole)
+[![Build Status](https://travis-ci.org/kiltjs/parole.svg?branch=master)](https://travis-ci.org/kiltjs/parole)
 [![Wercker](http://wercker.com/favicon.ico)](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
 [![wercker status](https://app.wercker.com/status/be7db1dae8daa1a31b992c75d8c9cf83/s "wercker status")](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
 ``` sh
