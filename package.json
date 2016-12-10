@@ -1,14 +1,14 @@
 {
-  "name": "q-promise",
+  "name": "parole",
   "version": "1.0.0",
-  "description": "promise polyfill with add-ons",
-  "main": "q.js",
+  "description": "Another ES6 promise implementation (compliant with Promises/A+)",
+  "main": "parole.js",
   "scripts": {
     "test": "make test"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/jstools/q-promise.git"
+    "url": "git+ssh://git@github.com/jstools/parole.git"
   },
   "keywords": [
     "promise",
@@ -20,9 +20,9 @@
   "author": "Jesús Germade <jesus@germade.es>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jstools/q-promise/issues"
+    "url": "https://github.com/jstools/parole/issues"
   },
-  "homepage": "https://github.com/jstools/q-promise#readme",
+  "homepage": "https://github.com/jstools/parole#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.11.1",

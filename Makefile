@@ -5,7 +5,7 @@ install:
 
 min:
 	@echo "minified version"
-	@$(shell npm bin)/uglifyjs q.js -o q.min.js -c -m
+	@$(shell npm bin)/uglifyjs parole.js -o parole.min.js -c -m
 
 lint:
 	@echo "checking syntax"

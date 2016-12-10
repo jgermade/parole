@@ -1,17 +1,18 @@
 {
-	"name": "q-promise",
+	"name": "parole",
 	"version": "1.0.0",
-	"description": "promise polyfill with add-ons",
-	"main": "q.min.js",
+	"description": "Another ES6 promise implementation (compliant with Promises/A+)",
+	"main": "parole.js",
 	"authors": [
 		"Jesús Germade <jesus@germade.es>"
 	],
 	"license": "MIT",
 	"keywords": [
 		"promise",
-		"polyfill",
-		"add-ons",
-		"when"
+    "polyfill",
+    "add-ons",
+    "when",
+    "es6"
 	],
 	"moduleType": [
 		"amd",

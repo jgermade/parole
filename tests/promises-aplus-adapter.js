@@ -1,9 +1,9 @@
 /* global process */
 
-var Q = require( process.env.TEST_JS === 'min' ? '../q.min' : '../q' );
+var Parole = require( process.env.TEST_JS === 'min' ? '../parole.min' : '../parole' );
 
 module.exports = {
-  resolved: Q.resolve,
-  rejected: Q.reject,
-  deferred: Q.defer
+  resolved: Parole.resolve,
+  rejected: Parole.reject,
+  deferred: Parole.defer
 };

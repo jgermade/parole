@@ -10,7 +10,7 @@
     module.exports = factory();
   } else {
     // Browser globals (root is window)
-    root.$q = factory();
+    root.Parole = factory();
   }
 }(this, function () {
 
@@ -95,9 +95,9 @@
     xThen(p, x, fulfilled);
   }
 
-  function Q (resolver) {
-    if( !(this instanceof Q) ) {
-      return new Q(resolver);
+  function Parole (resolver) {
+    if( !(this instanceof Parole) ) {
+      return new Parole(resolver);
     }
 
     if( typeof resolver !== 'function' ) {
@@ -123,9 +123,9 @@
 
   }
 
-  Q.prototype.then = function (onFulfilled, onRejected) {
+  Parole.prototype.then = function (onFulfilled, onRejected) {
     var p = this.__promise,
-        deferred = Q.defer();
+        deferred = Parole.defer();
 
     if( p.queue ) {
       p.queue.push([onFulfilled, onRejected, deferred]);
@@ -138,7 +138,7 @@
     return deferred.promise;
   };
 
-  Q.prototype.catch = function (onRejected) {
+  Parole.prototype.catch = function (onRejected) {
     return this.then(null, onRejected);
   };
 
@@ -150,36 +150,36 @@
     }
   }
 
-  Q.defer = function () {
+  Parole.defer = function () {
     var deferred = {};
-    deferred.promise = new Q(function (resolve, reject) {
+    deferred.promise = new Parole(function (resolve, reject) {
       deferred.resolve = resolve;
       deferred.reject = reject;
     });
     return deferred;
   };
 
-  Q.when = function (x) { return ( x && x.then ) ? x : Q.resolve(x); };
+  Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x); };
 
-  Q.resolve = function (value) {
-    return new Q(function (resolve) {
+  Parole.resolve = function (value) {
+    return new Parole(function (resolve) {
       resolve(value);
     });
   };
 
-  Q.reject = function (value) {
-    return new Q(function (resolve, reject) {
+  Parole.reject = function (value) {
+    return new Parole(function (resolve, reject) {
       reject(value);
     });
   };
 
-  Q.all = function (iterable) {
-    return new Q(function (resolve, reject) {
+  Parole.all = function (iterable) {
+    return new Parole(function (resolve, reject) {
       var pending = iterable.length,
           results = [];
       each(iterable, function (_promise, i) {
 
-        ( _promise.then ? _promise : Q.resolve(_promise) ).then(function (result) {
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
           results[i] = result;
           if( --pending === 0 ) {
             resolve(results);
@@ -194,15 +194,15 @@
     });
   };
 
-  Q.race = function (iterable) {
-    return new Q(function (resolve, reject) {
+  Parole.race = function (iterable) {
+    return new Parole(function (resolve, reject) {
       var done = false;
 
       each(iterable, function (_promise) {
         if( done ) {
           return;
         }
-        ( _promise.then ? _promise : Q.resolve(_promise) ).then(function (result) {
+        ( _promise.then ? _promise : Parole.resolve(_promise) ).then(function (result) {
           if( !done ) {
             done = true;
             resolve(result);
@@ -217,6 +217,6 @@
     });
   };
 
-  return Q;
+  return Parole;
 
 }));

@@ -1,35 +1,35 @@
 
-# q-promise
+# Parole
 
 [<img src="https://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo" title="Promises/A+ 1.0 compliant" align="right" />](https://promisesaplus.com/)
 
 Another ES6 promise implementation ([compliant](https://github.com/promises-aplus/promises-tests) with [Promises/A+](https://github.com/promises-aplus/promises-spec))
 
-[![](https://img.shields.io/npm/v/q-promise.svg)](https://www.npmjs.com/package/q-promise) [![](https://img.shields.io/bower/v/q-promise.svg)](http://bower.io/search/?q=q-promise) [![Build Status](https://travis-ci.org/jstools/q-promise.svg?branch=master)](https://travis-ci.org/jstools/q-promise) [![](https://img.shields.io/npm/dm/q-promise.svg)](https://www.npmjs.com/package/q-promise)
+[![](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole) [![](https://img.shields.io/bower/v/parole.svg)](http://bower.io/search/?q=parole) [![Build Status](https://travis-ci.org/jstools/parole.svg?branch=master)](https://travis-ci.org/jstools/parole) [![](https://img.shields.io/npm/dm/parole.svg)](https://www.npmjs.com/package/parole)
 
 ## Installation
 ```.sh
-npm install q-promise --save
+npm install parole --save
 
 # alternatively you can use bower (minified version by default)
-bower install q-promise --save
+bower install parole --save
 ```
 
-### ES6 Fulfill
-> q-promise implements [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) specs
+### ES6 fulfill
+> `Parole` implements [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) specs
 
 ``` js
-// q-promise respects the es6 promise specification
-// you can use q-promise as global polyfill
+// parole respects the es6 promise specification
+// you can use parole as global polyfill
 
 if( !window.Promise ) {
-  window.Promise = $q;
+  window.Promise = Parole;
 }
 ```
 
 ### Example
 ``` js
-$q(function (resolve, reject) {
+new Parole(function (resolve, reject) {
         resolve('gogogo!');
     })
 
@@ -64,8 +64,8 @@ checkpoint 3 all right!
 ```
 
 ### Tests
-[![travis](https://cdn.travis-ci.org/images/favicon-662edf026745110e8203d8cf38d1d325.png)](https://travis-ci.org/jstools/q-promise)
-[![Build Status](https://travis-ci.org/jstools/q-promise.svg?branch=master)](https://travis-ci.org/jstools/q-promise)
+[![travis](https://cdn.travis-ci.org/images/favicon-662edf026745110e8203d8cf38d1d325.png)](https://travis-ci.org/jstools/parole)
+[![Build Status](https://travis-ci.org/jstools/parole.svg?branch=master)](https://travis-ci.org/jstools/parole)
 [![Wercker](http://wercker.com/favicon.ico)](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
 [![wercker status](https://app.wercker.com/status/be7db1dae8daa1a31b992c75d8c9cf83/s "wercker status")](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
 ``` sh
