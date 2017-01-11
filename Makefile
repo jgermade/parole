@@ -52,11 +52,11 @@ increaseVersion:
 
 release: increaseVersion
 	git add .
-	git commit -a -n -m "increased version [$(shell node make pkg:version)]"
+	git commit -a -n -m "increased version [$(shell node .make pkg:version)]"
 	@git push origin master
 	npm publish
 	@echo "updating github relase"
-	@node make gh-release
+	@node .make gh-release
 
 # DEFAULT TASKS
 
