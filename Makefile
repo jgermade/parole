@@ -48,7 +48,7 @@ increaseVersion:
 	git fetch origin
 	git checkout master
 	@git pull origin master
-	@node make pkg:increaseVersion
+	@node .make pkg:increaseVersion
 
 release: increaseVersion
 	git add .
