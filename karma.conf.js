@@ -3,7 +3,7 @@
 module.exports = function(config) {
   'use strict';
 
-  var test_file = process.env.TEST_JS === 'min' ? 'parole.umd.min.js' : 'parole.umd.js';
+  var test_file = process.env.TEST_JS === 'min' ? 'parole.min.js' : 'parole.js';
 
   var configuration = {
     frameworks: ['mocha', 'chai'],

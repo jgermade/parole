@@ -7,13 +7,6 @@ min:
 	@echo "minified version"
 	@$(shell npm bin)/uglifyjs parole.js -o parole.min.js -c -m
 
-umd:
-	@echo "umd versions"
-	@ cat wrapper-umd.js > parole.umd.js
-	@ cat parole.js >> parole.umd.js
-	@ echo "}));" >> parole.umd.js
-	@$(shell npm bin)/uglifyjs parole.umd.js -o parole.umd.min.js -c -m
-
 lint:
 	@echo "checking syntax"
 	@$(shell npm bin)/eslint lib
@@ -33,12 +26,12 @@ promises-aplus-tests.min: min
 	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
 
 karma: export TEST_JS = normal
-karma: umd
+karma:
 	@echo "passing browser tests (karma)"
 	@$(shell npm bin)/karma start karma.conf.js
 
 karma.min: export TEST_JS = min
-karma.min: min umd
+karma.min: min
 	@echo "passing browser tests (karma)"
 	@$(shell npm bin)/karma start karma.conf.js
 

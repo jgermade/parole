@@ -1,7 +1,7 @@
 {
 	"name": "parole",
 	"description": "Another ES6 promise implementation (compliant with Promises/A+)",
-	"main": "parole.umd.js",
+	"main": "parole.js",
 	"authors": [
 		"Jesús Germade <jesus@germade.es>"
 	],
