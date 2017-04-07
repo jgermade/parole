@@ -42,7 +42,7 @@ new Parole(function (resolve, reject) {
         console.log('checkpoint 2', result);
     },function (result) {
         console.log('checkpoint 2.1', result);
-        return qPromise(function (resolve, reject) {
+        return new Parole(function (resolve, reject) {
             setTimeout(function () { resolve('all right!'); }, 400);
         });
     })
