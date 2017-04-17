@@ -33,7 +33,6 @@
 		"karma-mocha": "^1.1.1",
 		"karma-story-reporter": "^0.3.1",
 		"mocha": "^3.0.2",
-		"nitro": "^1.14.6",
 		"promises-aplus-tests": "^2.1.2",
 		"uglify-js": "^2.8.22"
 	}
