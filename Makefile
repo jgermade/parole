@@ -1,4 +1,6 @@
-# --- promise-q
+# --- parole
+
+git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
 install:
 	npm install
@@ -37,20 +39,19 @@ karma.min: min
 
 test: install lint custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
 
-increaseVersion:
-	git fetch origin
-	git checkout master
-	@git pull origin master
-	@node .make pkg:increaseVersion
+github.release: export RELEASE_URL=$(shell curl -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+	-d '{"tag_name": "v$(shell npm view parole version)", "target_commitish": "$(git_branch)", "name": "v$(shell npm view parole version)", "body": "", "draft": false, "prerelease": false}' \
+	-w '%{url_effective}' "https://api.github.com/repos/kiltjs/parole/releases" )
+github.release:
+	@echo ${RELEASE_URL}
+	@true
 
-release: increaseVersion
-	git add .
-	git commit -a -n -m "increased version [$(shell node .make pkg:version)]"
-	@git push origin master
+publish: test
+	npm version patch
+	git push origin $(git_branch)
 	npm publish
-	@echo "updating github relase"
-	@node .make gh-release
+	make github.release
 
 # DEFAULT TASKS
 
-.DEFAULT_GOAL := min
+.DEFAULT_GOAL := test
