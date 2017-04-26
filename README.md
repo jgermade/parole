@@ -66,10 +66,6 @@ checkpoint 3 all right!
 ```
 
 ### Tests
-[![travis](https://cdn.travis-ci.org/images/favicon.png)](https://travis-ci.org/kiltjs/parole)
-[![Build Status](https://travis-ci.org/kiltjs/parole.svg?branch=master)](https://travis-ci.org/kiltjs/parole)
-[![Wercker](http://wercker.com/favicon.ico)](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
-[![wercker status](https://app.wercker.com/status/be7db1dae8daa1a31b992c75d8c9cf83/s "wercker status")](https://app.wercker.com/project/bykey/be7db1dae8daa1a31b992c75d8c9cf83)
 ``` sh
 make test
 ```
