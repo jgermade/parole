@@ -20,6 +20,9 @@ custom-tests:
 test-aplus:
 	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-new.js
 
+test-aplus-defer:
+	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-defer.js
+
 promises-aplus-tests: export TEST_JS = normal
 promises-aplus-tests:
 	@echo "passing promises-aplus tests"
