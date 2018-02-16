@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "chai": "^3.5.0",
     "eslint": "^3.19.0",
     "karma": "^1.6.0",
