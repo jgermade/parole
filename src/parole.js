@@ -17,6 +17,10 @@ function isFunction (fn) {
   return typeof fn === 'function';
 }
 
+function isThenable (x) {
+  return ( typeof x === 'object' || isFunction(x) ) && 'then' in x;
+}
+
 function _runThen (p, then, is_fulfilled, value, resolve, reject) {
   var result;
 
@@ -26,7 +30,7 @@ function _runThen (p, then, is_fulfilled, value, resolve, reject) {
     result = then(value);
     if( result === p ) throw new TypeError('A promise can not be resolved by itself');
 
-    if( ( typeof result === 'object' || isFunction(result) ) && 'then' in result ) result.then.call(result, resolve, reject);
+    if( isThenable(result) ) result.then.call(result, resolve, reject);
     else resolve(result);
 
   } catch (reason) {
@@ -113,9 +117,8 @@ Parole.all = function (promises) {
         waiting_promises--;
         if( !waiting_promises ) resolve(results);
       };
-      if( (typeof promise === 'object' || isFunction(promise) ) && 'then' in promise ) {
-        promise.then.call(promise, addresult, reject);
-      } else addresult(promise);
+      if( isThenable(promise) ) promise.then.call(promise, addresult, reject);
+      else addresult(promise);
     });
   });
 };
@@ -123,9 +126,8 @@ Parole.all = function (promises) {
 Parole.race = function (promises) {
   return new Parole(function (resolve, reject) {
     promises.forEach(function (promise) {
-      if( (typeof promise === 'object' || isFunction(promise) ) && 'then' in promise ) {
-        promise.then.call(promise, resolve, reject);
-      } else resolve(promise);
+      if( isThenable(promise) ) promise.then.call(promise, resolve, reject);
+      else resolve(promise);
     });
   });
 };
