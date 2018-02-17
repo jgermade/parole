@@ -13,18 +13,17 @@
   }
 })(this, function () {
 
-  var runImmediatelly = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick : ( typeof setImmediate === 'function' ? setImmediate : setTimeout );
+  var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick : ( typeof setImmediate === 'function' ? setImmediate : setTimeout );
 
-  function runHandler (fn, deferred, x, fulfilled) {
-    if( typeof fn === 'function' ) {
+  function runHandler (then, is_fulfilled, value, resolve, reject) {
+    if( typeof then === 'function' ) {
       try {
-        deferred.resolve( fn(x) );
+        resolve( then(value) );
       } catch(reason) {
-        deferred.reject( reason );
+        reject( reason );
       }
-    } else {
-      deferred[ fulfilled ? 'resolve' : 'reject' ](x);
-    }
+    } else if( is_fulfilled ) resolve(value);
+    else reject(value);
   }
 
   function resolvePromise (p, x, fulfilled) {
@@ -39,9 +38,9 @@
     var queue = p.queue.splice(0);
     p.queue = null;
 
-    runImmediatelly(function () {
+    nextTick(function () {
       for( var i = 0, n = queue.length ; i < n ; i++ ) {
-        runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
+        runHandler( queue[i][fulfilled ? 0 : 1], fulfilled, x, queue[i][2], queue[i][3] );
       }
     }, 0);
   }
@@ -113,22 +112,21 @@
     }, function (reason) {
       resolveProcedure(p, reason, false);
     });
-
   }
 
   Parole.prototype.then = function (onFulfilled, onRejected) {
-    var p = this,
-        deferred = Parole.defer();
+    var p = this;
+    return new Parole(function (resolve, reject) {
 
-    if( p.queue ) {
-      p.queue.push([onFulfilled, onRejected, deferred]);
-    } else {
-      runImmediatelly(function () {
-        runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
-      });
-    }
+      if( p.queue ) {
+        p.queue.push([onFulfilled, onRejected, resolve, reject]);
+      } else {
+        nextTick(function () {
+          runHandler( p.fulfilled ? onFulfilled : onRejected, p.fulfilled, p.result, resolve, reject );
+        });
+      }
 
-    return deferred.promise;
+    });
   };
 
   Parole.prototype.catch = function (onRejected) {

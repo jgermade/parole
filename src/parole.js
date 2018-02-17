@@ -48,6 +48,7 @@ function Parole (runContext) {
     for( var i = 0, n = p.listeners.length ; i < n ; i++ ) p.listeners[i]();
   };
 
+  // try{
   runContext.call(this, function (result) {
     if( p.status !== PENDING ) return;
     p.status = FULFILLED;
@@ -59,6 +60,11 @@ function Parole (runContext) {
     p.value = reason;
     nextTick(_runListeners);
   });
+  // } catch(err) {
+  //   p.status = FULFILLED;
+  //   p.value = err;
+  //   nextTick(_runListeners);
+  // }
 }
 
 Parole.prototype.status = PENDING;
