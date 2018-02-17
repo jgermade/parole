@@ -1,6 +1,19 @@
+/* eslint no-console: "warn" */
 
 var Parole = require('./src/parole');
-var defer = require('./src/defer');
+// var defer = require('./src/defer');
+
+// eslint-disable-next-line
+function addOneLog (value) {
+  console.log('value', value);
+  return value + 1;
+}
+// eslint-disable-next-line
+function throwAddOneLog (value) {
+  console.log('value', value);
+  throw value + 1;
+}
+
 
 // console.log('Parole', Parole);
 // console.log('new Parole', new Parole (function (resolve) {
@@ -31,24 +44,10 @@ new Parole (function (resolve) {
   return value + 1;
 }).then(function (value) {
   console.log('value', value);
-  throw value + 1;
-  // throw new Parole(function () {
-  //   return value + 1;
-  // });
-}).catch(function (value) {
-  console.log('value', value);
-  return value + 1;
-});
+  // throw value + 1;
+  return Parole.reject(value + 1);
+}).catch(addOneLog);
 
-// function addOneLog (value) {
-//   console.log('value', value);
-//   return value + 1;
-// }
-// function throwAddOneLog (value) {
-//   console.log('value', value);
-//   throw value + 1;
-// }
-//
 // defer(function (resolve) {
 //     resolve(1);
 //   })

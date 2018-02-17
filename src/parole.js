@@ -34,7 +34,7 @@ function _runThen (p, then, is_fulfilled, value, resolve, reject) {
     else resolve(result);
 
   } catch (reason) {
-    return reject( reason );
+    reject( reason );
   }
 }
 
@@ -78,6 +78,7 @@ Parole.prototype.then = function (onFulfilled, onRejected) {
       _runThen(_p, is_fulfilled ? onFulfilled : onRejected, is_fulfilled, p.value, resolve, reject );
     }
     if( p.status !== PENDING ) nextTick(complete);
+    // if( p.status !== PENDING ) complete();
     else p.listeners.push(complete);
   });
 };
