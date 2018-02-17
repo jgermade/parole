@@ -25,19 +25,18 @@
   "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "chai": "^3.5.0",
-    "eslint": "^3.19.0",
-    "karma": "^1.6.0",
+    "chai": "^4.1.2",
+    "eslint": "^4.18.0",
+    "karma": "^2.0.0",
     "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^2.0.0",
-    "karma-firefox-launcher": "^1.0.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-mocha": "^1.1.1",
     "karma-story-reporter": "^0.3.1",
-    "mocha": "^3.0.2",
+    "mocha": "^5.0.1",
     "promises-aplus-tests": "^2.1.2",
-    "uglify-js": "^2.8.22",
+    "uglify-js": "^3.3.11",
     "p-promise": "^0.5.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
