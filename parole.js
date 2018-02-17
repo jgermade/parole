@@ -1,3 +1,4 @@
+/* global process, setImmediate */
 
 (function (root, factory) {
   if( typeof exports === 'object' && typeof module !== 'undefined' ) {
@@ -87,7 +88,7 @@
     if( p.resolving ) return;
     p.resolving = true;
 
-    if( x === p.promise ) {
+    if( x === p ) {
       fulfilled = false;
       x = new TypeError('A promise can not be resolved by itself');
     }
@@ -104,27 +105,19 @@
       throw new TypeError('Promise resolver ' + resolver + ' is not a function');
     }
 
-    var p = {
-      queue: [],
-      promise: this
-    };
+    var p = this;
+    p.queue = [];
 
-    this.__promise = p;
-
-    // try {
-      resolver(function (value) {
-        resolveProcedure(p, value, true);
-      }, function (reason) {
-        resolveProcedure(p, reason, false);
-      });
-    // } catch (reason) {
-    //   resolveProcedure(p, reason, false);
-    // }
+    resolver(function (value) {
+      resolveProcedure(p, value, true);
+    }, function (reason) {
+      resolveProcedure(p, reason, false);
+    });
 
   }
 
   Parole.prototype.then = function (onFulfilled, onRejected) {
-    var p = this.__promise,
+    var p = this,
         deferred = Parole.defer();
 
     if( p.queue ) {
