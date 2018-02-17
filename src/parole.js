@@ -42,12 +42,10 @@ function Parole (runContext) {
   if( !(this instanceof Parole) ) return new Parole(runContext);
 
   var p = this;
-  var listeners = [];
-
-  p.listeners = listeners;
+  p.listeners = [];
 
   var _runListeners = function () {
-    for( var i = 0, n = listeners.length ; i < n ; i++ ) listeners[i]();
+    for( var i = 0, n = p.listeners.length ; i < n ; i++ ) p.listeners[i]();
   };
 
   runContext.call(this, function (result) {
