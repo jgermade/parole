@@ -17,6 +17,9 @@ custom-tests:
 	@echo "passing es6 methods tests"
 	@$(shell npm bin)/mocha tests
 
+test-aplus:
+	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-new.js
+
 promises-aplus-tests: export TEST_JS = normal
 promises-aplus-tests:
 	@echo "passing promises-aplus tests"

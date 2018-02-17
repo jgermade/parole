@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "chai": "^3.5.0",
     "eslint": "^3.19.0",
     "karma": "^1.6.0",
@@ -34,6 +35,9 @@
     "karma-story-reporter": "^0.3.1",
     "mocha": "^3.0.2",
     "promises-aplus-tests": "^2.1.2",
-    "uglify-js": "^2.8.22"
+    "uglify-js": "^2.8.22",
+    "p-promise": "^0.5.0"
+  },
+  "dependencies": {
   }
 }
