@@ -12,6 +12,8 @@
   }
 })(this, function () {
 
+  var runImmediatelly = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick : ( typeof setImmediate === 'function' ? setImmediate : setTimeout );
+
   function runHandler (fn, deferred, x, fulfilled) {
     if( typeof fn === 'function' ) {
       try {
@@ -36,7 +38,7 @@
     var queue = p.queue.splice(0);
     p.queue = null;
 
-    setTimeout(function () {
+    runImmediatelly(function () {
       for( var i = 0, n = queue.length ; i < n ; i++ ) {
         runHandler( queue[i][fulfilled ? 0 : 1], queue[i][2], x, fulfilled );
       }
@@ -128,9 +130,9 @@
     if( p.queue ) {
       p.queue.push([onFulfilled, onRejected, deferred]);
     } else {
-      setTimeout(function () {
+      runImmediatelly(function () {
         runHandler( p.fulfilled ? onFulfilled : onRejected, deferred, p.result, p.fulfilled );
-      }, 0);
+      });
     }
 
     return deferred.promise;
