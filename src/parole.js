@@ -1,13 +1,13 @@
 
 var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
   process.nextTick :
-  (function(global, nextTick, process, prefixes, i, fn) {
+  (function(global, prefixes, i, fn) {
     for( i = prefixes.length - 1; i >= 0 ; i-- ) {
       fn = global[prefixes[i++] + 'equestAnimationFrame'];
       if( fn instanceof Function ) return fn;
     }
     return global.setImmediate || global.setTimeout;
-  })(typeof window === 'object' ? window : this, 'nextTick', 'process', 'oR msR mozR webkitR r'.split(' '), 0);
+  })( typeof window === 'object' ? window : this, 'oR msR mozR webkitR r'.split(' ') );
 
 var PENDING = -1;
 var FULFILLED = 0;
