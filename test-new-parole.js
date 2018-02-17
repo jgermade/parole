@@ -7,37 +7,37 @@ const defer = require('./src/defer');
 //   // console.log('runner', this, arguments);
 // }) );
 
-// new Parole (function (resolve) {
-//   resolve(1);
-// }).then(function (value) {
-//   console.log('value', value);
-//   return value + 1;
-// }).then(function (value) {
-//   console.log('value', value);
-//   throw value + 1;
-//   // throw new Parole(function () {
-//   //   return value + 1;
-//   // });
-// }).catch(function (value) {
-//   console.log('value', value);
-//   return value + 1;
-// });
-
-function addOneLog (value) {
+var p = new Parole (function (resolve) {
+  resolve(this);
+}).then(function (value) {
   console.log('value', value);
   return value + 1;
-}
-function throwAddOneLog (value) {
+}).then(function (value) {
   console.log('value', value);
   throw value + 1;
-}
+  // throw new Parole(function () {
+  //   return value + 1;
+  // });
+}).catch(function (value) {
+  console.log('value', value);
+  return value + 1;
+});
 
-defer(function (resolve) {
-    resolve(1);
-  })
-  .then(addOneLog)
-  .then(addOneLog)
-  .then(throwAddOneLog)
-  .catch(addOneLog)
-  .then(addOneLog)
-;
+// function addOneLog (value) {
+//   console.log('value', value);
+//   return value + 1;
+// }
+// function throwAddOneLog (value) {
+//   console.log('value', value);
+//   throw value + 1;
+// }
+//
+// defer(function (resolve) {
+//     resolve(1);
+//   })
+//   .then(addOneLog)
+//   .then(addOneLog)
+//   .then(throwAddOneLog)
+//   .catch(addOneLog)
+//   .then(addOneLog)
+// ;

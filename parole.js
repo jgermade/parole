@@ -109,15 +109,15 @@
 
     this.__promise = p;
 
-    try {
+    // try {
       resolver(function (value) {
         resolveProcedure(p, value, true);
       }, function (reason) {
         resolveProcedure(p, reason, false);
       });
-    } catch (reason) {
-      resolveProcedure(p, reason, false);
-    }
+    // } catch (reason) {
+    //   resolveProcedure(p, reason, false);
+    // }
 
   }
 

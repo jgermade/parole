@@ -1,6 +1,8 @@
 
 module.exports = defer;
 
+const runImmediatelly = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick : ( typeof setImmediate === 'function' ? setImmediate : setTimeout );
+
 const PENDING = -1;
 const FULFILLED = 0;
 const REJECTED = 1;
@@ -32,12 +34,12 @@ function defer (execute) {
     if( status !== PENDING ) return;
     status = FULFILLED;
     value = result;
-    setTimeout(_runListeners);
+    runImmediatelly(_runListeners);
   }, function (reason) {
     if( status !== PENDING ) return;
     status = REJECTED;
     value = reason;
-    setTimeout(_runListeners);
+    runImmediatelly(_runListeners);
   });
 
   return {
@@ -46,7 +48,7 @@ function defer (execute) {
         var fulfilled;
         if( status !== PENDING ) {
           fulfilled = status === FULFILLED;
-          setTimeout(function () {
+          runImmediatelly(function () {
             _runThen( fulfilled ? onFulfilled : onRejected, fulfilled, value, resolve, reject );
           });
         } else listeners.push(function () {
@@ -61,44 +63,44 @@ function defer (execute) {
   };
 }
 
-defer.resolve = function (value) {
-  return defer(function (resolve) {
-    resolve(value);
-  });
-};
-
-defer.reject = function (reason) {
-  return defer(function (_resolve, reject) {
-    reject(reason);
-  });
-};
-
 // defer.resolve = function (value) {
-//   return {
-//     then: function (onFulfilled) {
-//       if( !(onFulfilled instanceof Function) ) return defer.resolve(value);
-//       return defer(function (resolve, reject) {
-//         setTimeout(function () {
-//           _runThen( onFulfilled, true, value, resolve, reject );
-//         });
-//       });
-//     },
-//     catch: function () {}
-//   };
+//   return defer(function (resolve) {
+//     resolve(value);
+//   });
 // };
 //
 // defer.reject = function (reason) {
-//   return {
-//     then: function (_onFulfilled, onRejected) {
-//       return this.catch(onRejected);
-//     },
-//     catch: function (onRejected) {
-//       if( !(onRejected instanceof Function) ) return defer.reject(reason);
-//       return defer(function (resolve, reject) {
-//         setTimeout(function () {
-//           _runThen( onRejected, false, reason, resolve, reject );
-//         });
-//       });
-//     },
-//   };
+//   return defer(function (_resolve, reject) {
+//     reject(reason);
+//   });
 // };
+
+defer.resolve = function (value) {
+  return {
+    then: function (onFulfilled) {
+      if( !(onFulfilled instanceof Function) ) return defer.resolve(value);
+      return defer(function (resolve, reject) {
+        runImmediatelly(function () {
+          _runThen( onFulfilled, true, value, resolve, reject );
+        });
+      });
+    },
+    catch: function () {}
+  };
+};
+
+defer.reject = function (reason) {
+  return {
+    then: function (_onFulfilled, onRejected) {
+      return this.catch(onRejected);
+    },
+    catch: function (onRejected) {
+      if( !(onRejected instanceof Function) ) return defer.reject(reason);
+      return defer(function (resolve, reject) {
+        runImmediatelly(function () {
+          _runThen( onRejected, false, reason, resolve, reject );
+        });
+      });
+    },
+  };
+};

@@ -5,16 +5,27 @@ var Benchmark = require('benchmark');
 var Parole = require('./src/parole');
 var ParoleOld = require('./parole');
 var _defer = require('./src/defer');
+var P = require('p-promise');
 
 function addOne(x) {
   return x + 1;
 }
 
 new Benchmark.Suite()
-  .add('_defer', {
+  .add('Parole', {
     'defer': true,
     'fn': function(deferred) {
-      _defer(function (resolve) {
+      new Parole(function (resolve) {
+        resolve(1);
+      }).then(addOne).then(function() {
+        deferred.resolve();
+      });
+    }
+  })
+  .add('P', {
+    'defer': true,
+    'fn': function(deferred) {
+      P(function (resolve) {
         resolve(1);
       }).then(addOne).then(function() {
         deferred.resolve();
@@ -31,10 +42,10 @@ new Benchmark.Suite()
       });
     }
   })
-  .add('Parole', {
+  .add('_defer', {
     'defer': true,
     'fn': function(deferred) {
-      new Parole(function (resolve) {
+      _defer(function (resolve) {
         resolve(1);
       }).then(addOne).then(function() {
         deferred.resolve();
