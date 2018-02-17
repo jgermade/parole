@@ -24,7 +24,7 @@ function isThenable (x) {
 function _runThen (p, then, is_fulfilled, value, resolve, reject) {
   var result;
 
-  if( !isFunction(then) ) return (is_fulfilled ? resolve : reject)(value);
+  if( !isFunction(then) ) (is_fulfilled ? resolve : reject)(value);
 
   try {
     result = then(value);
@@ -48,8 +48,7 @@ function Parole (runContext) {
     for( var i = 0, n = p.listeners.length ; i < n ; i++ ) p.listeners[i]();
   };
 
-  // try{
-  runContext.call(this, function (result) {
+  runContext.call(p, function (result) {
     if( p.status !== PENDING ) return;
     p.status = FULFILLED;
     p.value = result;
@@ -60,11 +59,6 @@ function Parole (runContext) {
     p.value = reason;
     nextTick(_runListeners);
   });
-  // } catch(err) {
-  //   p.status = FULFILLED;
-  //   p.value = err;
-  //   nextTick(_runListeners);
-  // }
 }
 
 Parole.prototype.status = PENDING;
