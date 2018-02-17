@@ -3,7 +3,6 @@
 const nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
   process.nextTick :
   (function(global, nextTick, process, prefixes, i, fn) {
-    // if( typeof global.process === 'object' && typeof global.process.nextTick === 'function' ) return global.process.nextTick;
     for( i = prefixes.length - 1; i >= 0 ; i-- ) {
       fn = global[prefixes[i++] + 'equestAnimationFrame'];
       if( fn instanceof Function ) return fn;
