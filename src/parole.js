@@ -1,5 +1,5 @@
 
-const nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
+var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
   process.nextTick :
   (function(global, nextTick, process, prefixes, i, fn) {
     for( i = prefixes.length - 1; i >= 0 ; i-- ) {
@@ -8,7 +8,6 @@ const nextTick = typeof process === 'object' && typeof process.nextTick === 'fun
     }
     return global.setImmediate || global.setTimeout;
   })(typeof window === 'object' ? window : this, 'nextTick', 'process', 'oR msR mozR webkitR r'.split(' '), 0);
-
 
 var PENDING = -1;
 var FULFILLED = 0;
