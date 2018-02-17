@@ -35,9 +35,9 @@
     "karma-story-reporter": "^0.3.1",
     "mocha": "^3.0.2",
     "promises-aplus-tests": "^2.1.2",
-    "uglify-js": "^2.8.22"
+    "uglify-js": "^2.8.22",
+    "p-promise": "^0.5.0"
   },
   "dependencies": {
-    "p-promise": "^0.5.0"
   }
 }
