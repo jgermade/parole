@@ -13,16 +13,20 @@ var PENDING = -1;
 var FULFILLED = 0;
 var REJECTED = 1;
 
+function isFunction (fn) {
+  return typeof fn === 'function';
+}
+
 function _runThen (p, then, is_fulfilled, value, resolve, reject) {
   var result;
 
-  if( !(then instanceof Function) ) return (is_fulfilled ? resolve : reject)(value);
+  if( !isFunction(then) ) return (is_fulfilled ? resolve : reject)(value);
 
   try {
     result = then(value);
     if( result === p ) throw new TypeError('A promise can not be resolved by itself');
 
-    if( (typeof result === 'object' || result instanceof Function) && 'then' in result ) result.then.call(result, resolve, reject);
+    if( ( typeof result === 'object' || isFunction(result) ) && 'then' in result ) result.then.call(result, resolve, reject);
     else resolve(result);
 
   } catch (reason) {
@@ -59,8 +63,8 @@ Parole.prototype.status = PENDING;
 
 Parole.prototype.then = function (onFulfilled, onRejected) {
   var p = this;
-  if( p.status === FULFILLED && !( onFulfilled instanceof Function ) ) return p;
-  if( p.status === REJECTED && !( onRejected instanceof Function ) ) return p;
+  if( p.status === FULFILLED && !isFunction(onFulfilled) ) return p;
+  if( p.status === REJECTED && !isFunction(onRejected) ) return p;
 
   return new Parole(function (resolve, reject) {
     var _p = this;
@@ -109,7 +113,7 @@ Parole.all = function (promises) {
         waiting_promises--;
         if( !waiting_promises ) resolve(results);
       };
-      if( (typeof promise === 'object' || promise instanceof Function) && 'then' in promise ) {
+      if( (typeof promise === 'object' || isFunction(promise) ) && 'then' in promise ) {
         promise.then.call(promise, addresult, reject);
       } else addresult(promise);
     });
@@ -119,7 +123,7 @@ Parole.all = function (promises) {
 Parole.race = function (promises) {
   return new Parole(function (resolve, reject) {
     promises.forEach(function (promise) {
-      if( (typeof promise === 'object' || promise instanceof Function) && 'then' in promise ) {
+      if( (typeof promise === 'object' || isFunction(promise) ) && 'then' in promise ) {
         promise.then.call(promise, resolve, reject);
       } else resolve(promise);
     });
