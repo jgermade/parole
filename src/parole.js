@@ -76,7 +76,6 @@ Parole.prototype.then = function (onFulfilled, onRejected) {
       _runThen(_p, is_fulfilled ? onFulfilled : onRejected, is_fulfilled, p.value, resolve, reject );
     }
     if( p.status !== PENDING ) nextTick(complete);
-    // if( p.status !== PENDING ) complete();
     else p.listeners.push(complete);
   });
 };
