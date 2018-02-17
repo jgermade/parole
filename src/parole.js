@@ -16,12 +16,12 @@ var PENDING = -1;
 var FULFILLED = 0;
 var REJECTED = 1;
 
-function _runThen (p, then, fulfilled, value, resolve, reject) {
+function _runThen (p, then, is_fulfilled, value, resolve, reject) {
   var result;
 
-  if( !( then instanceof Function ) ) return (fulfilled ? resolve : reject)(value);
+  if( !(then instanceof Function) ) return (is_fulfilled ? resolve : reject)(value);
 
-  try{
+  try {
     result = then(value);
     if( result === p ) throw new TypeError('A promise can not be resolved by itself');
 
@@ -71,12 +71,10 @@ Parole.prototype.then = function (onFulfilled, onRejected) {
 
   return new Parole(function (resolve, reject) {
     var _p = this;
-    // eslint-disable-next-line
-    // console.log('Parole.prototype.then', _p );
 
     function complete () {
-      var fulfilled = p.status === FULFILLED;
-      _runThen(_p, fulfilled ? onFulfilled : onRejected, fulfilled, p.value, resolve, reject );
+      var is_fulfilled = p.status === FULFILLED;
+      _runThen(_p, is_fulfilled ? onFulfilled : onRejected, is_fulfilled, p.value, resolve, reject );
     }
     if( p.status !== PENDING ) nextTick(complete);
     else p.listeners.push(complete);
@@ -134,37 +132,5 @@ Parole.race = function (promises) {
     });
   });
 };
-
-// Parole.resolve = function (value) {
-//   return {
-//     then: function (onFulfilled) {
-//       if( !(onFulfilled instanceof Function) ) return Parole.resolve(value);
-//       return new Parole(function (resolve, reject) {
-//         var p = this;
-//         nextTick(function () {
-//           _runThen( p, onFulfilled, true, value, resolve, reject );
-//         });
-//       });
-//     },
-//     catch: function () {}
-//   };
-// };
-//
-// Parole.reject = function (reason) {
-//   return {
-//     then: function (_onFulfilled, onRejected) {
-//       return this.catch(onRejected);
-//     },
-//     catch: function (onRejected) {
-//       if( !(onRejected instanceof Function) ) return Parole.reject(reason);
-//       return new Parole(function (resolve, reject) {
-//         var p = this;
-//         nextTick(function () {
-//           _runThen( p, onRejected, false, reason, resolve, reject );
-//         });
-//       });
-//     },
-//   };
-// };
 
 module.exports = Parole;
