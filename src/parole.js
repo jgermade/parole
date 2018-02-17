@@ -1,5 +1,4 @@
 
-// const nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick : ( typeof setImmediate === 'function' ? setImmediate : setTimeout );
 const nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
   process.nextTick :
   (function(global, nextTick, process, prefixes, i, fn) {
@@ -38,8 +37,6 @@ function Parole (runContext) {
   var p = this;
   var listeners = [];
 
-  // p.status = PENDING;
-  // p.value = null;
   p.listeners = listeners;
 
   var _runListeners = function () {
@@ -62,8 +59,6 @@ function Parole (runContext) {
 Parole.prototype.status = PENDING;
 
 Parole.prototype.then = function (onFulfilled, onRejected) {
-  // // eslint-disable-next-line
-  // console.log('Parole.prototype.then', this.status );
   var p = this;
   if( p.status === FULFILLED && !( onFulfilled instanceof Function ) ) return p;
   if( p.status === REJECTED && !( onRejected instanceof Function ) ) return p;
