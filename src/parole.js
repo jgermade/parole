@@ -109,7 +109,7 @@ Parole.defer = function () {
 
 Parole.all = function (promises) {
   var waiting_promises = promises.length;
-  return new Promise(function (resolve, reject) {
+  return new Parole(function (resolve, reject) {
     var results = new Array(waiting_promises);
     promises.forEach(function (promise, i) {
       var addresult = function (result) {
