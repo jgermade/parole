@@ -15,14 +15,19 @@
 
   var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
       (function (global) {
-        if( 'MessageChannel' in global ) return (function (mc) {
-          var callback;
-          mc.port1.onmessage = function () { callback(); };
-          return function (_callback) {
-            callback = _callback;
-            mc.port2.postMessage(0);
+        if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
+          return function (fn) {
+            resolved.then(fn);
           };
-        })( new MessageChannel() );
+        })( global.Promise.resolve() );
+        // if( 'MessageChannel' in global ) return (function (mc) {
+        //   var callback;
+        //   mc.port1.onmessage = function () { callback(); };
+        //   return function (_callback) {
+        //     callback = _callback;
+        //     mc.port2.postMessage(0);
+        //   };
+        // })( new MessageChannel() );
         if( 'MutationObserver' in global ) return (function (node) {
           return function (callback) {
             var observer = new MutationObserver(function () {
