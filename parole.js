@@ -13,18 +13,26 @@
   }
 })(this, function () {
 
-  var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
-    process.nextTick :
-    (function(global, prefixes, i, fn) {
-      for( i = prefixes.length - 1; i >= 0 ; i-- ) {
-        fn = global[prefixes[i++] + 'equestAnimationFrame'];
-        if( fn instanceof Function ) return fn;
-      }
-      return global.setImmediate || global.setTimeout;
-    })( typeof window === 'object' ? window : this, 'oR msR mozR webkitR r'.split(' ') );
+  var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
+      (function (global) {
+        return 'MutationObserver' in global ? (function (node) {
+          return function (callback) {
+            var observer = new MutationObserver(function () {
+              callback();
+              observer.disconnect();
+            });
+            observer.observe( node, {characterData: true} );
+            node.data = false;
+          };
+        })( document.createTextNode('') ) : ( global.setImmediate || global.setTimeout );
+      })( typeof window === 'object' ? window : this );
+
+  function isObjectLike (x) {
+    return ( typeof x === 'object' || typeof x === 'function' );
+  }
 
   function isThenable (x) {
-    return ( typeof x === 'object' || x instanceof Function ) && 'then' in x;
+    return isObjectLike(x) && 'then' in x;
   }
 
   function runHandler (then, is_fulfilled, value, resolve, reject) {
@@ -59,7 +67,7 @@
   function xThen (p, x, fulfilled, resolve, reject) {
     var then;
 
-    if( x && ( typeof x === 'object' || typeof x === 'function' ) ) {
+    if( x && isObjectLike(x) ) {
       try {
         if( x === p ) throw new TypeError('A promise can not be resolved by itself');
         then = x.then;
