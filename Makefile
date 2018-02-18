@@ -15,7 +15,7 @@ lint:
 
 custom-tests:
 	@echo "passing es6 methods tests"
-	@$(shell npm bin)/mocha tests --exit
+	@$(shell npm bin)/mocha tests/*-test.js --exit
 
 test-aplus:
 	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-new.js
