@@ -27,6 +27,13 @@
         })( document.createTextNode('') ) : ( global.setImmediate || global.setTimeout );
       })( typeof window === 'object' ? window : this );
 
+  function once (fn) {
+    return function () {
+      if( fn ) fn.apply(this, arguments);
+      fn = null;
+    };
+  }
+
   function isObjectLike (x) {
     return ( typeof x === 'object' || typeof x === 'function' );
   }
@@ -35,31 +42,14 @@
     return isObjectLike(x) && 'then' in x;
   }
 
-  function runHandler (then, is_fulfilled, value, resolve, reject) {
-    if( typeof then === 'function' ) {
-      try {
-        resolve( then(value) );
-      } catch(reason) {
-        reject( reason );
-      }
-    } else if( is_fulfilled ) resolve(value);
-    else reject(value);
-  }
-
-  function runThenable (then, p, x, resolve, reject) {
-    var executed = false;
+  function runThenable (then, xThen, p, x, resolve, reject) {
     try {
       then.call(x, function (value) {
-        if( executed ) return;
-        executed = true;
         xThen(p, value, true, resolve, reject);
       }, function (reason) {
-        if( executed ) return;
-        executed = true;
         xThen(p, reason, false, resolve, reject);
       });
     } catch(err) {
-      if( executed ) return;
       xThen(p, err, false, resolve, reject);
     }
   }
@@ -73,7 +63,7 @@
         then = x.then;
 
         if( fulfilled && typeof then === 'function' ) {
-          runThenable(then, p, x, resolve, reject);
+          runThenable(then, once(xThen), p, x, resolve, reject);
         } else {
           (fulfilled ? resolve : reject)(x);
         }
@@ -85,32 +75,31 @@
     }
   }
 
+  function _runQueue (queue) {
+    for( var i = 0, n = queue.length ; i < n ; i++ ) {
+      queue[i]();
+    }
+  }
+
   function Parole (resolver) {
     if( !(this instanceof Parole) ) return new Parole(resolver);
 
     var p = this,
-        runQueue = function (is_fulfilled, result, queue) {
-          if( p.completed ) return;
-          p.completed = true;
-
-          p.fulfilled = is_fulfilled;
-          p.value = result;
-
-          nextTick(function () {
-            for( var i = 0, n = queue.length ; i < n ; i++ ) {
-              queue[i]();
-            }
-          }, 0);
-        },
         reject = function (reason) {
-          runQueue(false, reason, p.queue);
+          if( p.fulfilled || p.rejected ) return;
+          p.rejected = true;
+          p.value = reason;
+          nextTick(function () { _runQueue(p.queue); });
         };
 
     p.queue = [];
 
     resolver(function (value) {
       xThen(p, value, true, function (result) {
-        runQueue(true, result, p.queue);
+        if( p.fulfilled || p.rejected ) return;
+        p.fulfilled = true;
+        p.value = result;
+        nextTick(function () { _runQueue(p.queue); });
       }, reject);
     }, reject);
   }
@@ -120,10 +109,18 @@
     return new Parole(function (resolve, reject) {
 
       function complete () {
-        runHandler( p.fulfilled ? onFulfilled : onRejected, p.fulfilled, p.value, resolve, reject );
+        var then = p.fulfilled ? onFulfilled : onRejected;
+        if( typeof then === 'function' ) {
+          try {
+            resolve( then(p.value) );
+          } catch(reason) {
+            reject( reason );
+          }
+        } else if( p.fulfilled ) resolve(p.value);
+        else reject(p.value);
       }
 
-      if( !p.completed ) {
+      if( !p.fulfilled && !p.rejected ) {
         p.queue.push(complete);
       } else {
         nextTick(complete);
