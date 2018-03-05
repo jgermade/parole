@@ -177,6 +177,7 @@
         if( isThenable(promise) ) promise.then.call(promise, addresult, reject);
         else addresult(promise);
       });
+      if( !results.length ) resolve(results);
     });
   };
 
@@ -186,6 +187,7 @@
         if( isThenable(promise) ) promise.then.call(promise, resolve, reject);
         else resolve(promise);
       });
+      if( !promises.length ) resolve();
     });
   };
 

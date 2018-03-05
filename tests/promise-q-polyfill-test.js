@@ -252,6 +252,15 @@ describe('promise all', function () {
         });
     });
 
+    it('empty list', function(done) {
+
+      Parole.all([])
+        .then(function (results) {
+          assert.equal( results.length , 0);
+          done();
+        });
+    });
+
 });
 
 describe('promise race', function () {
@@ -283,10 +292,6 @@ describe('promise race', function () {
 
     });
 
-});
-
-describe('promise race', function () {
-
     it('reject', function(done) {
 
       Parole.race([
@@ -310,6 +315,16 @@ describe('promise race', function () {
         .catch(function (reason) {
           assert.equal(reason, 'winner');
           setTimeout(done, 1);
+        });
+
+    });
+
+    it('empty list', function(done) {
+
+      Parole.race([])
+        .then(function (result) {
+          assert.strictEqual(result, undefined);
+          done();
         });
 
     });
