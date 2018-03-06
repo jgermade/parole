@@ -26,7 +26,8 @@ module.exports = function(config) {
       }
     },
     singleRun: true,
-    reporters: ['story']
+    reporters: ['story'],
+    concurrency: 1,
   };
 
   if(process.env.TRAVIS){
