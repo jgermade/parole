@@ -22,9 +22,7 @@
   var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
       (function (global) {
         if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
-          return function (fn) {
-            resolved.then(fn);
-          };
+          return resolved.then.bind(resolved);
         })( global.Promise.resolve() );
         if( 'MutationObserver' in global ) return (function (node) {
           return function (callback) {
