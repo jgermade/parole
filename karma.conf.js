@@ -27,11 +27,11 @@ module.exports = function(config) {
     },
     singleRun: true,
     reporters: ['story'],
-    concurrency: 1,
   };
 
   if(process.env.TRAVIS){
     configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
+    configuration.concurrency = 1;
   }
 
   if(process.env.DRONE){
