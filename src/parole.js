@@ -2,6 +2,11 @@
 var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ?
   process.nextTick :
   (function(global, prefixes, i, fn) {
+    // resolved Promise is the fastest nextTick
+    if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
+      return resolved.then.bind(resolved);
+    })( global.Promise.resolve() );
+    // otherwise using rAF
     for( i = prefixes.length - 1; i >= 0 ; i-- ) {
       fn = global[prefixes[i++] + 'equestAnimationFrame'];
       if( fn instanceof Function ) return fn;
