@@ -1,17 +1,10 @@
-/* global process */
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.Parole = factory());
+}(this, (function () { 'use strict';
 
-(function (root, factory) {
-  if( typeof exports === 'object' && typeof module !== 'undefined' ) {
-    // CommonJS
-    module.exports = factory();
-  } else if( typeof define === 'function' && define.amd ) {
-      // AMD. Register as an anonymous module.
-      define([], factory);
-  } else {
-      // Browser globals
-      root.Parole = factory();
-  }
-})(this, function () {
+  /* global process */
 
   function _runQueue (queue) {
     for( var i = 0, n = queue.length ; i < n ; i++ ) {
@@ -19,8 +12,11 @@
     }
   }
 
-  var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
-      (function (global, raf_prefixes) {
+  var nextTick = typeof window !== 'object' ? (
+        typeof process === 'object' && typeof process.nextTick === 'function' && process.nextTick || typeof global === 'object' && (
+          global.setInmediate || global.setTimeout
+        )
+      ) : (function (window, raf_prefixes) {
         // if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
         //   return resolved.then.bind(resolved);
         // })( global.Promise.resolve() );
@@ -32,12 +28,10 @@
 
         // from: https://github.com/wesleytodd/browser-next-tick
         for( var i = raf_prefixes.length - 1 ; i >= 0 ; i-- ) {
-          if( window[raf_prefixes[i] + 'equestAnimationFrame'] ) return window[raf_prefixes[i] + 'equestAnimationFrame'].bind(global);
+          if( window[raf_prefixes[i] + 'equestAnimationFrame'] ) return window[raf_prefixes[i] + 'equestAnimationFrame'].bind(window);
         }
 
-        if( global.setImmediate ) return global.setImmediate;
-
-        if( 'MutationObserver' in global ) return (function (node) {
+        if( 'MutationObserver' in window ) return (function (node) {
           return function (callback) {
             var observer = new MutationObserver(function () {
               callback();
@@ -47,9 +41,10 @@
             node.data = false;
           };
         })( document.createTextNode('') );
-        
-        return global.setTimeout;
-      })( typeof window === 'object' ? window : this, 'oR msR mozR webkitR r'.split(' ') );
+
+        return window.setImmediate || window.setTimeout;
+
+      })( window, 'oR msR mozR webkitR r'.split(' ') );
 
   function once (fn) {
     return function () {
@@ -205,4 +200,4 @@
 
   return Parole;
 
-});
+})));

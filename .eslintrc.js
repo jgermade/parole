@@ -1,12 +1,17 @@
 module.exports = {
     "env": {
-      "browser": true
+      "browser": true,
+      "es6": true,
+      "node": true,
     },
     "globals": {
       "module": true,
       "define": true,
       "require": true,
       "global": true
+    },
+    "parserOptions": {
+      "sourceType": "module",
     },
     "extends": "eslint:recommended",
     "rules": {
