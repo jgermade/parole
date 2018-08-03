@@ -5,12 +5,13 @@ git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 install:
 	npm install
 
-umd:
-	@$(shell npm bin)/rollup parole.esm.js --file parole.js --format umd --name "Parole"
+build:
+	@$(shell npm bin)/rollup parole.esm.js --file parole.js --format cjs
+	@$(shell npm bin)/rollup parole.esm.js --file parole.umd.js --format umd --name "Parole"
 
 min:
 	@echo "minified version"
-	@$(shell npm bin)/uglifyjs parole.js -o parole.min.js -c -m
+	@$(shell npm bin)/uglifyjs parole.umd.js -o parole.min.js -c -m
 
 lint:
 	@echo "checking syntax"
@@ -43,7 +44,7 @@ karma.min:
 	@echo "passing browser tests (karma)"
 	@$(shell npm bin)/karma start karma.conf.js
 
-test: install lint umd min custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
+test: install lint build min custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
 
 npm.publish:
 	npm version patch
