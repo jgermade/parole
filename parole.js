@@ -20,10 +20,23 @@
   }
 
   var nextTick = typeof process === 'object' && typeof process.nextTick === 'function' ? process.nextTick :
-      (function (global) {
-        if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
-          return resolved.then.bind(resolved);
-        })( global.Promise.resolve() );
+      (function (global, raf_prefixes) {
+        // if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
+        //   return resolved.then.bind(resolved);
+        // })( global.Promise.resolve() );
+        //
+        // Remove due to issues with touchmove:
+        //
+        // https://stackoverflow.com/questions/32446715/why-is-settimeout-game-loop-experiencing-lag-when-touchstart-event-fires/35668492
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=567800
+
+        // from: https://github.com/wesleytodd/browser-next-tick
+        for( var i = raf_prefixes.length - 1 ; i >= 0 ; i-- ) {
+          if( window[raf_prefixes[i] + 'equestAnimationFrame'] ) return window[raf_prefixes[i] + 'equestAnimationFrame'].bind(global);
+        }
+
+        if( global.setImmediate ) return global.setImmediate;
+
         if( 'MutationObserver' in global ) return (function (node) {
           return function (callback) {
             var observer = new MutationObserver(function () {
@@ -34,8 +47,9 @@
             node.data = false;
           };
         })( document.createTextNode('') );
-        return global.setImmediate || global.setTimeout;
-      })( typeof window === 'object' ? window : this );
+        
+        return global.setTimeout;
+      })( typeof window === 'object' ? window : this, 'oR msR mozR webkitR r'.split(' ') );
 
   function once (fn) {
     return function () {
