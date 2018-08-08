@@ -2,8 +2,8 @@
 
 var Benchmark = require('benchmark');
 
-var Parole = require('./src/parole');
-var ParoleOld = require('./parole');
+var Parole = require('../src/parole');
+var ParoleOld = require('../dist/parole');
 var P = require('p-promise');
 
 function addOne(x) {
