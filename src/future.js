@@ -1,6 +1,6 @@
 
 var nextTick = typeof window !== 'object' ? (
-      typeof process === 'object' && typeof process.nextTick === 'function' && process.nextTick || typeof global === 'object' && (
+      typeof process === 'object' && process !== null && typeof process.nextTick === 'function' && process.nextTick || typeof global === 'object' && global !== null && (
         global.setInmediate || global.setTimeout
       )
     ) : (function (window, raf_prefixes) {
@@ -40,25 +40,27 @@ function _runQueue (queue, result) {
   };
 }
 
-function _resolvePromise (promise, result, fulfill, reject) {
+function _resolvePromise (promise, x, fulfill, reject) {
   var _then;
   try {
 
-    if( result === promise ) throw new TypeError('A promise can not be resolved by itself');
+    if( x === promise ) throw new TypeError('A promise can not be resolved by itself');
 
-    if( (typeof result === 'object' && result !== null) || typeof result === 'function' ) {
-      _then = result.then;
+    if( x && (typeof x === 'object' || typeof x === 'function') ) {
+      _then = x.then;
 
       if( _then instanceof Function )
-        _then.call(result, function (_result) {
-          _resolvePromise(promise, _result, fulfill, reject);
-        }, reject);
+        _then.call(x, function (y) {
+          _resolvePromise(promise, y, fulfill, reject);
+        }, function (reason) {
+          reject(reason);
+        });
 
       else
-        fulfill(result);
+        fulfill(x);
 
     } else {
-      fulfill(result);
+      fulfill(x);
     }
 
   } catch(reason) {
