@@ -80,6 +80,11 @@ function rejectedFuture (result) {
   });
 }
 
+var onUncaught = null;
+future.onUncaught = function (_onUncaught) {
+  onUncaught = _onUncaught;
+};
+
 function future (run) {
 
   var result,
@@ -87,10 +92,13 @@ function future (run) {
       reject_listeners = [],
       is_resolving = false,
       is_fullfilled = false,
-      is_rejected = false;
+      is_rejected = false,
+      is_uncaught = true;
 
   var promise = {
     then: function (onFulfilled, onRejected) {
+
+      if( is_uncaught instanceof Function ) is_uncaught = false;
 
       if( is_fullfilled && typeof onFulfilled !== 'function' ) return resolvedFuture(result);
 
@@ -147,16 +155,15 @@ function future (run) {
       result = _result;
 
       nextTick( _runQueue( resolve_listeners, result ) );
-    }, function (reason) {
-      is_rejected = true;
-      result = reason;
-
-      nextTick( _runQueue( reject_listeners, result ) );
-    });
+    }, reject);
   };
 
   var reject = function (reason) {
     if( is_resolving || is_fullfilled || is_rejected ) return;
+
+    if( onUncaught ) nextTick(function () {
+      onUncaught(reason);
+    });
 
     is_resolving = true;
     is_rejected = true;
@@ -186,5 +193,11 @@ future.defer = function () {
   });
   return deferred;
 };
+
+future.onUncaught(function (reason) {
+
+  if( reason instanceof Error ) console.error('Uncaught (in promise) ' + reason.toString() ); // eslint-disable-line
+
+});
 
 module.exports = future;
