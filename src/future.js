@@ -33,12 +33,6 @@ var nextTick = typeof window !== 'object' ? (
 
     })( window, 'oR msR mozR webkitR r'.split(' ') );
 
-function _runQueue (queue, result) {
-  return function () {
-    for( var i = 0, n = queue.length; i < n ; i++ ) queue[i](result);
-    // queue.splice();
-  };
-}
 
 function _resolvePromise (promise, x, fulfill, reject) {
   var _then;
@@ -52,7 +46,9 @@ function _resolvePromise (promise, x, fulfill, reject) {
       if( _then instanceof Function )
         _then.call(x, function onFulfilled (y) {
           _resolvePromise(promise, y, fulfill, reject);
-        }, reject);
+        }, function onRejected (reason) {
+          reject(reason);
+        });
 
       else
         fulfill(x);
@@ -83,6 +79,24 @@ future.onUncaught = function (_onUncaught) {
   onUncaught = _onUncaught;
 };
 
+function _runQueue (queue, result, is_uncaught) {
+  return function () {
+    for( var i = 0, n = queue.length; i < n ; i++ ) queue[i](result);
+    queue.splice();
+    if( is_uncaught ) onUncaught(result);
+  };
+}
+
+// function _resolveThen (_promise, then, _result, _resolve, _reject ) {
+//   return function () {
+//     try {
+//       _resolvePromise(_promise, then(_result), _resolve, _reject );
+//     } catch(_reason) {
+//       _reject(_reason);
+//     }
+//   };
+// }
+
 function future (run) {
 
   var result,
@@ -106,23 +120,42 @@ function future (run) {
 
         var _onFulfilled = onFulfilled instanceof Function ? function (_result) {
 
+            // nextTick( _resolveThen(_promise, onFulfilled, _result, _resolve, _reject) );
+
             nextTick(function () {
-              _resolvePromise(_promise, { then: function (_complete) {
-                // var value = onFulfilled(_result);
-                // if( value === promise ) console.log('TypeError promise'); // eslint-disable-line
-                // if( value === _promise ) console.log('TypeError _promise'); // eslint-disable-line
-                _complete( onFulfilled(_result) );
-              } }, _resolve, _reject );
+              try {
+                _resolvePromise(_promise, onFulfilled(_result), _resolve, _reject );
+              } catch(_reason) {
+                _reject(_reason);
+              }
+
+              // _resolvePromise(_promise, { then: function (_complete) {
+              //   if( is_completed ) return;
+              //   is_completed = true;
+              //   // var value = onFulfilled(_result);
+              //   // if( value === promise ) console.log('TypeError promise'); // eslint-disable-line
+              //   // if( value === _promise ) console.log('TypeError _promise'); // eslint-disable-line
+              //   _complete( onFulfilled(_result) );
+              // } }, _resolve, _reject );
             });
 
           } : _resolve;
 
         var _onRejected = onRejected instanceof Function ? function (_result) {
 
+            // nextTick( _resolveThen(_promise, onRejected, _result, _resolve, _reject) );
+
             nextTick(function () {
-              _resolvePromise(_promise, { then: function (_complete) {
-                _complete( onRejected(_result) );
-              } }, _resolve, _reject );
+              try {
+                _resolvePromise(_promise, onRejected(_result), _resolve, _reject );
+              } catch(_reason) {
+                _reject(_reason);
+              }
+              // _resolvePromise(_promise, { then: function (_complete) {
+              //   if( is_completed ) return;
+              //   is_completed = true;
+              //   _complete( onRejected(_result) );
+              // } }, _resolve, _reject );
             });
 
           } : _reject;
@@ -153,6 +186,7 @@ function future (run) {
       result = _result;
 
       nextTick( _runQueue( resolve_listeners, result ) );
+      reject_listeners.splice();
     }, reject);
   };
 
@@ -163,11 +197,8 @@ function future (run) {
     is_rejected = true;
     result = reason;
 
-    nextTick( _runQueue( reject_listeners, result ) );
-
-    if( onUncaught && is_uncaught ) nextTick(function () {
-      onUncaught(reason);
-    });
+    nextTick( _runQueue( reject_listeners, result, is_uncaught ) );
+    resolve_listeners.splice();
   };
 
   try{
@@ -195,7 +226,7 @@ future.defer = function () {
 
 future.onUncaught(function (reason) {
 
-  if( reason instanceof Error ) console.error('Uncaught (in promise) ' + reason.toString() ); // eslint-disable-line
+  if( reason instanceof Error ) console.error('Uncaught (in promise) ' + reason.toString() + '\nstack: ' + reason.stack ); // eslint-disable-line
 
 });
 
