@@ -50,11 +50,9 @@ function _resolvePromise (promise, x, fulfill, reject) {
       _then = x.then;
 
       if( _then instanceof Function )
-        _then.call(x, function (y) {
+        _then.call(x, function onFulfilled (y) {
           _resolvePromise(promise, y, fulfill, reject);
-        }, function (reason) {
-          reject(reason);
-        });
+        }, reject);
 
       else
         fulfill(x);
@@ -98,7 +96,7 @@ function future (run) {
   var promise = {
     then: function (onFulfilled, onRejected) {
 
-      if( is_uncaught instanceof Function ) is_uncaught = false;
+      if( onRejected instanceof Function ) is_uncaught = false;
 
       if( is_fullfilled && typeof onFulfilled !== 'function' ) return resolvedFuture(result);
 
@@ -113,7 +111,7 @@ function future (run) {
                 // var value = onFulfilled(_result);
                 // if( value === promise ) console.log('TypeError promise'); // eslint-disable-line
                 // if( value === _promise ) console.log('TypeError _promise'); // eslint-disable-line
-                return _complete( onFulfilled(_result) );
+                _complete( onFulfilled(_result) );
               } }, _resolve, _reject );
             });
 
@@ -123,7 +121,7 @@ function future (run) {
 
             nextTick(function () {
               _resolvePromise(_promise, { then: function (_complete) {
-                return _complete( onRejected(_result) );
+                _complete( onRejected(_result) );
               } }, _resolve, _reject );
             });
 
@@ -161,19 +159,20 @@ function future (run) {
   var reject = function (reason) {
     if( is_resolving || is_fullfilled || is_rejected ) return;
 
-    if( onUncaught ) nextTick(function () {
-      onUncaught(reason);
-    });
-
     is_resolving = true;
     is_rejected = true;
     result = reason;
 
     nextTick( _runQueue( reject_listeners, result ) );
+
+    if( onUncaught && is_uncaught ) nextTick(function () {
+      onUncaught(reason);
+    });
   };
 
   try{
-    run.call(promise, resolve, reject);
+    // run.call(promise, resolve, reject);
+    run(resolve, reject);
   } catch(_reason) {
     reject(_reason);
   }
