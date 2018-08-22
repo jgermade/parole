@@ -2,12 +2,6 @@
 
 import nextTick from './next-tick';
 
-function _runQueue (queue) {
-  for( var i = 0, n = queue.length ; i < n ; i++ ) {
-    queue[i]();
-  }
-}
-
 function once (fn) {
   return function () {
     if( fn ) fn.apply(this, arguments);
@@ -56,6 +50,18 @@ function xThen (p, x, fulfilled, resolve, reject) {
   }
 }
 
+var onUncaught = null;
+
+Parole.onUncaught = function (_onUncaught) {
+  onUncaught = _onUncaught;
+};
+
+function _runQueue (queue, is_uncaught, value) {
+  for( var i = 0, n = queue.length ; i < n ; i++ ) queue[i]();
+  queue.splice();
+  if( is_uncaught && onUncaught ) onUncaught(value);
+}
+
 function Parole (resolver) {
   if( !(this instanceof Parole) ) return new Parole(resolver);
 
@@ -64,7 +70,7 @@ function Parole (resolver) {
         if( p.fulfilled || p.rejected ) return;
         p.rejected = true;
         p.value = reason;
-        nextTick(function () { _runQueue(p.queue); });
+        nextTick(function () { _runQueue(p.queue, !p.caught, p.value); });
       };
 
   p.queue = [];
@@ -81,6 +87,9 @@ function Parole (resolver) {
 
 Parole.prototype.then = function (onFulfilled, onRejected) {
   var p = this;
+
+  if( onRejected instanceof Function ) p.caught = true;
+
   return new Parole(function (resolve, reject) {
 
     function complete () {
