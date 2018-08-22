@@ -33,7 +33,6 @@ var nextTick = typeof window !== 'object' ? (
 
     })( window, 'oR msR mozR webkitR r'.split(' ') );
 
-
 function _resolvePromise (promise, x, fulfill, reject) {
   var _then;
   try {

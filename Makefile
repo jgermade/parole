@@ -57,7 +57,10 @@ test: install lint build min custom-tests promises-aplus-tests promises-aplus-te
 npm.publish:
 	npm version patch
 	git push origin $(git_branch) && git push --tags
-	npm publish
+	- npm publish --access public
+	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'parole'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- npm publish
+	- git checkout package.json
 	@echo "published ${PKG_VERSION}"
 
 github.release: export PKG_NAME=$(shell node -e "console.log(require('./package.json').name);")
