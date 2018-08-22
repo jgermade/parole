@@ -6,12 +6,12 @@ install:
 	npm install
 
 build:
-	@$(shell npm bin)/rollup parole.esm.js --file parole.js --format cjs
-	@$(shell npm bin)/rollup parole.esm.js --file parole.umd.js --format umd --name "Parole"
+	@$(shell npm bin)/rollup parole.js --file dist/parole.js --format cjs
+	@$(shell npm bin)/rollup parole.js --file dist/parole.umd.js --format umd --name "Parole"
 
 min:
 	@echo "minified version"
-	@$(shell npm bin)/uglifyjs parole.umd.js -o parole.min.js -c -m
+	@$(shell npm bin)/uglifyjs dist/parole.umd.js -o dist/parole.min.js -c -m
 
 lint:
 	@echo "checking syntax"
@@ -21,8 +21,16 @@ custom-tests:
 	@echo "passing es6 methods tests"
 	@$(shell npm bin)/mocha tests/*-test.js --exit
 
-test-aplus:
+test-new:
 	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-new.js
+
+test-defer:
+	@$(shell npm bin)/eslint src/defer.js
+	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-defer.js
+
+test-future:
+	@$(shell npm bin)/eslint src/future.js
+	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-future.js
 
 promises-aplus-tests: export TEST_JS = normal
 promises-aplus-tests:
@@ -49,7 +57,10 @@ test: install lint build min custom-tests promises-aplus-tests promises-aplus-te
 npm.publish:
 	npm version patch
 	git push origin $(git_branch) && git push --tags
-	npm publish
+	- npm publish --access public
+	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'parole'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- npm publish
+	- git checkout package.json
 	@echo "published ${PKG_VERSION}"
 
 github.release: export PKG_NAME=$(shell node -e "console.log(require('./package.json').name);")

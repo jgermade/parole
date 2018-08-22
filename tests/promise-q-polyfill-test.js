@@ -1,7 +1,7 @@
 /* global describe, it */
 
 if( typeof require !== 'undefined' ) { // if is nodejs (not browser)
-  var Parole = require('../parole');
+  var Parole = require('../dist/parole');
   var assert = require('assert');
 }
 
