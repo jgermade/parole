@@ -79,7 +79,7 @@ npm.publish: npm.pushVersion git.tag
 	# - cd dist && npm publish --access public
 	- npm publish --access public
 	# - node -e "var fs = require('fs'); var pkg = require('./dist/package.json'); pkg.name = 'parole'; fs.writeFile('dist/package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
-	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'parole'; fs.writeFile('dist/package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'parole'; fs.writeFile('package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
 	# - cd dist && npm publish
 	- npm publish
 	git reset --hard origin/$(git_branch)
