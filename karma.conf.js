@@ -30,8 +30,8 @@ module.exports = function(config) {
   };
 
   if( process.env.TRAVIS ) {
-    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ]
-    configuration.concurrency = 1
+    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
+    configuration.concurrency = 1;
   }
 
   if( process.env.DRONE ) {

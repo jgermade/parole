@@ -2,6 +2,12 @@
 
 git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
+.PHONY: install build min lint custom-tests test-new test-defer test-future promises-aplus-tests promises-aplus-tests.min karma karma.min test npm.increaseVersion npm.pushVersion git.tag npm.publish github.release release
+
+ifndef NPM_VERSION
+  export NPM_VERSION=patch
+endif
+
 install:
 	npm install
 
@@ -53,10 +59,6 @@ karma.min:
 	@$(shell npm bin)/karma start karma.conf.js
 
 test: install lint build min custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
-
-ifndef NPM_VERSION
-	export NPM_VERSION=patch
-endif
 
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version
