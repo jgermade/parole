@@ -54,14 +54,31 @@ karma.min:
 
 test: install lint build min custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
 
-npm.publish:
-	npm version patch
-	git push origin $(git_branch) && git push --tags
-	- npm publish --access public
-	- node -e "var fs = require('fs'); var pkg = require('./package.json'); pkg.name = 'parole'; fs.writeFile('./package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
-	- npm publish
-	- git checkout package.json
-	@echo "published ${PKG_VERSION}"
+ifndef NPM_VERSION
+	export NPM_VERSION=patch
+endif
+
+npm.increaseVersion:
+	npm version ${NPM_VERSION} --no-git-tag-version
+
+npm.pushVersion: npm.increaseVersion
+	git commit -a -n -m "v$(shell node -e "process.stdout.write(require('./package').version + '\n')")" 2> /dev/null; true
+	git push origin $(master_branch)
+
+git.tag: build
+	git pull --tags
+	git add dist -f --all
+	-git commit -n -m "updating dist" 2> /dev/null; true
+	git tag -a v$(shell node -e "process.stdout.write(require('./package').version + '\n')") -m "v$(shell node -e "process.stdout.write(require('./package').version + '\n')")"
+	git push --tags
+	# git push origin $(git_branch)
+
+npm.publish: npm.pushVersion git.tag
+	- cd dist && npm publish --access public
+	- node -e "var fs = require('fs'); var pkg = require('./dist/package.json'); pkg.name = 'parole'; fs.writeFile('dist/package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
+	- cd dist && npm publish
+	git reset --hard origin/$(git_branch)
+	@git checkout $(git_branch)
 
 github.release: export REPOSITORY="kiltjs/parole"
 github.release: export PKG_VERSION=$(shell node -e "console.log('v'+require('./package.json').version);")
