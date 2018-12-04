@@ -18,23 +18,23 @@ module.exports = function(config) {
       test_file,
       'tests/{,**/}*-test.js'
     ],
-    browsers: [ 'Chrome', 'Firefox' ],
+    browsers: [ 'ChromeHeadless', 'FirefoxHeadless' ],
     customLaunchers: {
       Chrome_no_sandbox: {
         base: 'Chrome',
-        flags: ['--no-sandbox']
-      }
+        flags: ['--no-sandbox'],
+      },
     },
     singleRun: true,
     reporters: ['story'],
   };
 
-  if(process.env.TRAVIS){
-    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
-    configuration.concurrency = 1;
+  if( process.env.TRAVIS ) {
+    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ]
+    configuration.concurrency = 1
   }
 
-  if(process.env.DRONE){
+  if( process.env.DRONE ) {
     configuration.browsers = [ 'Chrome' ];
   }
 
