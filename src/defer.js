@@ -15,85 +15,85 @@ var nextTick = typeof window !== 'object' ? (
 
       // from: https://github.com/wesleytodd/browser-next-tick
       for( var i = raf_prefixes.length - 1 ; i >= 0 ; i-- ) {
-        if( window[raf_prefixes[i] + 'equestAnimationFrame'] ) return window[raf_prefixes[i] + 'equestAnimationFrame'].bind(window);
+        if( window[raf_prefixes[i] + 'equestAnimationFrame'] ) return window[raf_prefixes[i] + 'equestAnimationFrame'].bind(window)
       }
 
       if( 'MutationObserver' in window ) return (function (node) {
         return function (callback) {
           var observer = new MutationObserver(function () {
-            callback();
-            observer.disconnect();
-          });
-          observer.observe( node, {characterData: true} );
-          node.data = false;
-        };
-      })( document.createTextNode('') );
+            callback()
+            observer.disconnect()
+          })
+          observer.observe( node, {characterData: true} )
+          node.data = false
+        }
+      })( document.createTextNode('') )
 
-      return window.setImmediate || window.setTimeout;
+      return window.setImmediate || window.setTimeout
 
-    })( window, 'oR msR mozR webkitR r'.split(' ') );
+    })( window, 'oR msR mozR webkitR r'.split(' ') )
 
-const PENDING = 0;
-const FULFILLED = 1;
-const REJECTED = -1;
+const PENDING = 0
+const FULFILLED = 1
+const REJECTED = -1
 
 function _runTryThen (then, value, resolve, reject) {
-	var result;
+	var result
 	try {
-		result = then(value);
+		result = then(value)
 	} catch(reason) {
-		reject(reason);
+		reject(reason)
 	}
 
 	if( (typeof result === 'object' || typeof result === 'object') && 'then' in result )  {
-		result.then(resolve, reject);
-	} else resolve(result);
+		result.then(resolve, reject)
+	} else resolve(result)
 }
 
 function _tryThen (then, resolve, reject) {
 	return function (result) {
-		_runTryThen(then, result, resolve, reject);
-	};
+		_runTryThen(then, result, resolve, reject)
+	}
 }
 
 function _tryThenResult (then, result, resolve, reject) {
 	return function () {
-		_runTryThen(then, result, resolve, reject);
-	};
+		_runTryThen(then, result, resolve, reject)
+	}
 }
 
 function _runThen (status, result, onFulfil, onReject, on_fulfil, on_reject) {
-	var deferred = defer();
+	var deferred = defer()
 
 	if( status === FULFILLED ) {
 		if( onFulfil instanceof Function ) {
-			nextTick( _tryThenResult(onFulfil, result, deferred.resolve, deferred.reject ) );
-		} else deferred.resolve(result);
+			nextTick( _tryThenResult(onFulfil, result, deferred.resolve, deferred.reject ) )
+		} else deferred.resolve(result)
 
-		return deferred;
+		return deferred
 	}
 
 	if( status === REJECTED ) {
 		if( onReject instanceof Function ) {
-			nextTick( _tryThenResult(onReject, result, deferred.resolve, deferred.reject ) );
-		} else deferred.reject(result);
-		return deferred;
+			nextTick( _tryThenResult(onReject, result, deferred.resolve, deferred.reject ) )
+		} else deferred.reject(result)
+		return deferred
 	}
 
-	if( onFulfil instanceof Function ) on_fulfil.push( _tryThen(onFulfil, deferred.resolve, deferred.reject ) );
-	else on_fulfil.push(deferred.resolve);
+	if( onFulfil instanceof Function ) on_fulfil.push( _tryThen(onFulfil, deferred.resolve, deferred.reject ) )
+	else on_fulfil.push(deferred.resolve)
 
 
-	if( onReject instanceof Function ) on_reject.push( _tryThen(onReject, deferred.resolve, deferred.reject ) );
-	else on_reject.push(deferred.reject);
+	if( onReject instanceof Function ) on_reject.push( _tryThen(onReject, deferred.resolve, deferred.reject ) )
+	else on_reject.push(deferred.reject)
 
-	return deferred.promise;
+	return deferred.promise
 }
 
 function runQueue (queue, result) {
 	return function () {
-		for( var i = 0, n = queue.length; i < n ; i++ ) queue[i](result);
-	};
+		for( var i = 0, n = queue.length; i < n ; i++ ) queue[i](result)
+	}
 }
 
 function defer (_resolver) {
@@ -104,38 +104,38 @@ function defer (_resolver) {
 			on_reject = [],
 			promise = {
 				then: function (onFulfil, onReject) {
-					return _runThen(status, result, onFulfil, onReject, on_fulfil, on_reject);
+					return _runThen(status, result, onFulfil, onReject, on_fulfil, on_reject)
 				},
 				catch: function (onReject) {
-					return _runThen(status, result, null, onReject, on_fulfil, on_reject);
+					return _runThen(status, result, null, onReject, on_fulfil, on_reject)
 				},
-			};
+			}
 
 	function resolve (value) {
-		if( status !== PENDING ) return;
+		if( status !== PENDING ) return
 
-		if( value === promise ) throw new TypeError('A promise can not be resolved by itself');
+		if( value === promise ) throw new TypeError('A promise can not be resolved by itself')
 
 		if( (typeof value === 'object' || typeof value === 'object') && 'then' in value )  {
 
-			value.then(resolve, reject);
+			value.then(resolve, reject)
 
 		} else {
-			status = FULFILLED;
-			result = value;
+			status = FULFILLED
+			result = value
 
-			nextTick( runQueue(on_fulfil, result) );
+			nextTick( runQueue(on_fulfil, result) )
 		}
 
 	}
 
 	function reject (reason) {
-		if( status !== PENDING ) return;
+		if( status !== PENDING ) return
 
-		status = REJECTED;
-		result = reason;
+		status = REJECTED
+		result = reason
 
-		nextTick( runQueue(on_reject, result) );
+		nextTick( runQueue(on_reject, result) )
 	}
 
 	// if( _resolver instanceof Function ) {
@@ -152,22 +152,22 @@ function defer (_resolver) {
 		promise: promise,
 		resolve: resolve,
 		reject: reject,
-	};
+	}
 }
 
 defer.resolve = function (result) {
 	// return defer(function (resolve) {
 	// 	resolve(result);
 	// });
-	var deferred = defer();
-	deferred.resolve(result);
-	return deferred.promise;
-};
+	var deferred = defer()
+	deferred.resolve(result)
+	return deferred.promise
+}
 
 defer.reject = function (result) {
-	var deferred = defer();
-	deferred.reject(result);
-	return deferred.promise;
-};
+	var deferred = defer()
+	deferred.reject(result)
+	return deferred.promise
+}
 
-module.exports = defer;
+module.exports = defer

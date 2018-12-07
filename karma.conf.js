@@ -1,9 +1,8 @@
 /* global process */
 
 module.exports = function(config) {
-  'use strict';
 
-  var test_file = process.env.TEST_JS === 'min' ? 'dist/parole.min.js' : 'dist/parole.umd.js';
+  var test_file = process.env.TEST_JS === 'min' ? 'dist/parole.min.js' : 'dist/parole.umd.js'
 
   var configuration = {
     frameworks: ['mocha', 'chai'],
@@ -27,20 +26,20 @@ module.exports = function(config) {
     },
     singleRun: true,
     reporters: ['story'],
-  };
+  }
 
   if( process.env.TRAVIS ) {
-    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ];
-    configuration.concurrency = 1;
+    configuration.browsers = [ 'Chrome_no_sandbox', 'Firefox' ]
+    configuration.concurrency = 1
   }
 
   if( process.env.DRONE ) {
-    configuration.browsers = [ 'Chrome' ];
+    configuration.browsers = [ 'Chrome' ]
   }
 
   if(process.env.WERCKER){
-    configuration.browsers = [ 'Chrome' ];
+    configuration.browsers = [ 'Chrome' ]
   }
 
-  config.set(configuration);
-};
+  config.set(configuration)
+}
