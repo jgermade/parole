@@ -5,7 +5,7 @@
 
 Another ES6 promise implementation ([compliant](https://github.com/promises-aplus/promises-tests) with [Promises/A+](https://github.com/promises-aplus/promises-spec))
 
-[![ᴋɪʟᴛ ᴊs](https://jesus.germade.es/assets/images/badge-kiltjs.svg)](https://github.com/kiltjs)
+[![ᴋɪʟᴛ ᴊs](https://jesus.germade.dev/assets/images/badge-kiltjs.svg)](https://github.com/kiltjs)
 [![npm](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole)
 [![Build Status](https://travis-ci.org/kiltjs/parole.svg?branch=master)](https://travis-ci.org/kiltjs/parole)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
