@@ -3,9 +3,11 @@
   "version": "1.1.30",
   "description": "Another ES6 promise implementation (compliant with Promises/A+)",
   "main": "dist/parole.js",
+  "module": "src/parole.js",
   "scripts": {
     "test": "make test"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/kiltjs/parole.git"
@@ -24,20 +26,15 @@
   },
   "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
-    "benchmark": "^2.1.4",
-    "chai": "^4.1.2",
-    "eslint": "^4.18.0",
-    "karma": "^2.0.2",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-firefox-launcher": "^1.1.0",
-    "karma-mocha": "^1.1.1",
-    "karma-story-reporter": "^0.3.1",
-    "mocha": "^5.0.1",
-    "p-promise": "^0.5.0",
-    "promises-aplus-tests": "^2.1.2",
-    "rollup": "^0.63.5",
-    "uglify-js": "^3.3.11"
+    "eslint": "8.25.0",
+    "eslint-config-standard": "17.0.0",
+    "eslint-config-standard-with-typescript": "23.0.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "6.1.0",
+    "eslint-plugin-react": "7.31.10",
+    "promises-aplus-tests": "2.1.2"
   },
   "dependencies": {}
 }

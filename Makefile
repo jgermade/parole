@@ -1,17 +1,20 @@
-# --- parole
+#!make
+SHELL := env PATH=$(shell npm bin):$(PATH) /bin/bash -O extglob
 
-git_branch := $(shell git rev-parse --abbrev-ref HEAD)
-
+.SILENT:
 .PHONY: install build min lint custom-tests test-new test-defer test-future promises-aplus-tests promises-aplus-tests.min karma karma.min test npm.increaseVersion npm.pushVersion git.tag npm.publish github.release release
+
+# git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
 ifndef NPM_VERSION
   export NPM_VERSION=patch
 endif
 
-install:
-	npm install
+node_modules:; npm install
+install:; npm install
+i: install
 
-build:
+build: node_modules
 	@$(shell npm bin)/rollup parole.js --file dist/parole.js --format cjs
 	@$(shell npm bin)/rollup parole.js --file dist/parole.umd.js --format umd --name "Parole"
 
@@ -58,7 +61,8 @@ karma.min:
 	@echo "passing browser tests (karma)"
 	@$(shell npm bin)/karma start karma.conf.js
 
-test: install lint build min custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
+test: node_modules
+
 
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version
