@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
+    "@types/node": "^18.11.0",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "esbuild": "^0.15.11",

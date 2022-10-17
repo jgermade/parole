@@ -1,15 +1,22 @@
+// import { nextTick } from './nextTick'
 
-import { nextTick } from './nextTick'
+const nextTick = process.nextTick
 
-const PENDING = 0
-const FULFILLED = 1
-const REJECTED = -1
+// const PENDING = 'PENDING'
+// const FULFILLED = 'FULFILLED'
+// const REJECTED = 'REJECTED'
 
 enum PromiseStates {
+  PENDING = 'PENDING',
+  FULFILLED = 'FULFILLED',
+  REJECTED = 'REJECTED',
+}
+
+const {
   PENDING,
   FULFILLED,
   REJECTED,
-}
+} = PromiseStates
 
 // interface ThenQueueEntry {
 //   onFulfill: Function | null
@@ -24,7 +31,7 @@ interface DeferredObject {
 
 // const noop = (result: any) => result
 
-function isThenable (o: any): boolean {
+export function isThenable (o: any): boolean {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!o) return false
   if (typeof o !== 'object' && typeof o !== 'function') return false
@@ -32,87 +39,95 @@ function isThenable (o: any): boolean {
   return true
 }
 
-function runThenQueue (value: any, state: PromiseStates, queue: Array<[Function | null, Function | null]>): void {
-  if (state === FULFILLED) {
-    queue.forEach(([onFulfill = null]) => onFulfill?.(value))
-  } else {
-    queue.forEach(([,onReject]) => onReject?.(value))
+function runThen (fn: Function, x: any, resolve: Function, reject: Function): void {
+  try {
+    resolve(fn(x))
+  } catch (err) {
+    reject(err)
   }
 }
 
 export class Parole {
   value: any = null
   state: PromiseStates = PENDING
-  resolveCalled: boolean = false
-  thenQueue: Array<[Function | null, Function | null]> = []
+  
+  private isCompleted: boolean = false
+  private readonly fulfillQueue: Function[] = []
+  private readonly rejectQueue: Function[] = []
 
-  resolve (x: any): void {
-    if (this.resolveCalled) return
-        
-    if (x === this) throw new TypeError('resolve value is the promise itself')
-    // if (x instanceof Parole) {
-    //     this.resolveCalled = true
-    //     this.value = x.value
-    //     this.state = x.state
-    // }
+  private doComplete (value: any, state: PromiseStates): void {
+    if (this.isCompleted) return
+    this.isCompleted = true
+    this.value = value
+    this.state = state
 
-    let hasThen: boolean
+    nextTick(() => {
+      state === FULFILLED
+        ? this.rejectQueue.splice(0, this.rejectQueue.length)
+        : this.fulfillQueue.splice(0, this.fulfillQueue.length)
 
+      ;(
+        state === FULFILLED
+          ? this.fulfillQueue.splice(0, this.fulfillQueue.length)
+          : this.rejectQueue.splice(0, this.rejectQueue.length)
+      ).forEach((run) => run(value))
+    })
+  }
+
+  private resolve (x: any): void {
     try {
-      hasThen = isThenable(x)
+      if (x === this) throw new TypeError('resolve value is the promise itself')
+
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      const xThen = x && (typeof x === 'object' || x instanceof Function) && x.then
+
+      if (xThen instanceof Function) {
+        xThen.call(
+          x,
+          (_x: any) => !this.isCompleted && this.resolve(_x),
+          (_r: any) => this.doComplete(_r, REJECTED),
+        )
+      } else {
+        this.doComplete(x, FULFILLED)
+      }
+    } catch (err) {
+      this.doComplete(err, REJECTED)
+    }
+  }
+
+  private reject (reason: any): void {
+    this.doComplete(reason, REJECTED)
+  }
+
+  constructor (runFn: Function) {
+    try {
+      runFn(this.resolve.bind(this), this.reject.bind(this))
     } catch (err) {
       this.reject(err)
-      return
     }
+  }
 
-    if (hasThen) {
-      try {
-        x.then(
-          this.resolve.bind(this),
-          this.reject.bind(this),
-        )
-      } catch (err) {
-        if (this.state === PENDING) {
-          this.reject(err)
-        }
+  then (onFulfill: any = null, onReject: any = null): Parole {
+    return new Parole((resolve: Function, reject: Function) => {
+      const thenFulfill = onFulfill instanceof Function
+        ? (x: any) => runThen(onFulfill, x, resolve, reject)
+        : (x: any) => resolve(x)
+
+      const thenReject = onReject instanceof Function
+        ? (x: any) => runThen(onReject, x, resolve, reject)
+        : (x: any) => reject(x)
+
+      if (this.state === FULFILLED) nextTick(() => thenFulfill(this.value))
+      else if (this.state === REJECTED) nextTick(() => thenReject(this.value))
+      else {
+        this.fulfillQueue.push(thenFulfill)
+        this.rejectQueue.push(thenReject)
       }
-    } else {
-      this.resolveCalled = true
-      this.value = x
-      this.state = FULFILLED
-
-      nextTick(() => runThenQueue(this.value, this.state, this.thenQueue))
-    }
+    })
   }
 
-  reject (reason: any): void {
-    if (this.resolveCalled) return
-    this.resolveCalled = true
-
-    this.value = reason
-    this.state = REJECTED
-
-    nextTick(() => runThenQueue(this.value, this.state, this.thenQueue))
-  }
-
-  constructor (runClosure: Function) {
-    runClosure(this.resolve.bind(this), this.reject.bind(this))
-  }
-
-  then (onFulfill: Function | null = null, onReject: Function | null = null): Parole {
-    this.thenQueue.push([
-      typeof onFulfill === 'function' ? onFulfill : null,
-      typeof onReject === 'function' ? onReject : null,
-    ])
-    return this
-  }
-
-  catch (onReject: Function | null = null): Parole {
-    this.thenQueue.push([
-      null,
-      typeof onReject === 'function' ? onReject : null,
-    ])
-    return this
+  catch (onReject: any = null): Parole {
+    return this.then(null, onReject)
   }
 
   static resolve (x: any): Parole {

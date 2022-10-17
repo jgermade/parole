@@ -18,19 +18,22 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var parole_exports = {};
 __export(parole_exports, {
-  Parole: () => Parole
+  Parole: () => Parole,
+  isThenable: () => isThenable
 });
 module.exports = __toCommonJS(parole_exports);
-var import_nextTick = require("./nextTick");
-const PENDING = 0;
-const FULFILLED = 1;
-const REJECTED = -1;
+const nextTick = process.nextTick;
 var PromiseStates = /* @__PURE__ */ ((PromiseStates2) => {
-  PromiseStates2[PromiseStates2["PENDING"] = 0] = "PENDING";
-  PromiseStates2[PromiseStates2["FULFILLED"] = 1] = "FULFILLED";
-  PromiseStates2[PromiseStates2["REJECTED"] = 2] = "REJECTED";
+  PromiseStates2["PENDING"] = "PENDING";
+  PromiseStates2["FULFILLED"] = "FULFILLED";
+  PromiseStates2["REJECTED"] = "REJECTED";
   return PromiseStates2;
 })(PromiseStates || {});
+const {
+  PENDING,
+  FULFILLED,
+  REJECTED
+} = PromiseStates;
 function isThenable(o) {
   if (!o)
     return false;
@@ -40,72 +43,74 @@ function isThenable(o) {
     return false;
   return true;
 }
-function runThenQueue(value, state, queue) {
-  if (state === FULFILLED) {
-    queue.forEach(([onFulfill = null]) => onFulfill == null ? void 0 : onFulfill(value));
-  } else {
-    queue.forEach(([, onReject]) => onReject == null ? void 0 : onReject(value));
+function runThen(fn, x, resolve, reject) {
+  try {
+    resolve(fn(x));
+  } catch (err) {
+    reject(err);
   }
 }
 class Parole {
-  constructor(runClosure) {
+  constructor(runFn) {
     this.value = null;
     this.state = PENDING;
-    this.resolveCalled = false;
-    this.thenQueue = [];
-    runClosure(this.resolve.bind(this), this.reject.bind(this));
-  }
-  resolve(x) {
-    if (this.resolveCalled)
-      return;
-    if (x === this)
-      throw new TypeError("resolve value is the promise itself");
-    let hasThen;
+    this.isCompleted = false;
+    this.fulfillQueue = [];
+    this.rejectQueue = [];
     try {
-      hasThen = isThenable(x);
+      runFn(this.resolve.bind(this), this.reject.bind(this));
     } catch (err) {
       this.reject(err);
-      return;
     }
-    if (hasThen) {
-      try {
-        x.then(
-          this.resolve.bind(this),
-          this.reject.bind(this)
+  }
+  doComplete(value, state) {
+    if (this.isCompleted)
+      return;
+    this.isCompleted = true;
+    this.value = value;
+    this.state = state;
+    nextTick(() => {
+      state === FULFILLED ? this.rejectQueue.splice(0, this.rejectQueue.length) : this.fulfillQueue.splice(0, this.fulfillQueue.length);
+      (state === FULFILLED ? this.fulfillQueue.splice(0, this.fulfillQueue.length) : this.rejectQueue.splice(0, this.rejectQueue.length)).forEach((run) => run(value));
+    });
+  }
+  resolve(x) {
+    try {
+      if (x === this)
+        throw new TypeError("resolve value is the promise itself");
+      const xThen = x && (typeof x === "object" || x instanceof Function) && x.then;
+      if (xThen instanceof Function) {
+        xThen.call(
+          x,
+          (_x) => !this.isCompleted && this.resolve(_x),
+          (_r) => this.doComplete(_r, REJECTED)
         );
-      } catch (err) {
-        if (this.state === PENDING) {
-          this.reject(err);
-        }
+      } else {
+        this.doComplete(x, FULFILLED);
       }
-    } else {
-      this.resolveCalled = true;
-      this.value = x;
-      this.state = FULFILLED;
-      (0, import_nextTick.nextTick)(() => runThenQueue(this.value, this.state, this.thenQueue));
+    } catch (err) {
+      this.doComplete(err, REJECTED);
     }
   }
   reject(reason) {
-    if (this.resolveCalled)
-      return;
-    this.resolveCalled = true;
-    this.value = reason;
-    this.state = REJECTED;
-    (0, import_nextTick.nextTick)(() => runThenQueue(this.value, this.state, this.thenQueue));
+    this.doComplete(reason, REJECTED);
   }
   then(onFulfill = null, onReject = null) {
-    this.thenQueue.push([
-      typeof onFulfill === "function" ? onFulfill : null,
-      typeof onReject === "function" ? onReject : null
-    ]);
-    return this;
+    return new Parole((resolve, reject) => {
+      const thenFulfill = onFulfill instanceof Function ? (x) => runThen(onFulfill, x, resolve, reject) : (x) => resolve(x);
+      const thenReject = onReject instanceof Function ? (x) => runThen(onReject, x, resolve, reject) : (x) => reject(x);
+      if (this.state === FULFILLED)
+        nextTick(() => thenFulfill(this.value));
+      else if (this.state === REJECTED)
+        nextTick(() => thenReject(this.value));
+      else {
+        this.fulfillQueue.push(thenFulfill);
+        this.rejectQueue.push(thenReject);
+      }
+    });
   }
   catch(onReject = null) {
-    this.thenQueue.push([
-      null,
-      typeof onReject === "function" ? onReject : null
-    ]);
-    return this;
+    return this.then(null, onReject);
   }
   static resolve(x) {
     return new Parole((resolve) => resolve(x));
