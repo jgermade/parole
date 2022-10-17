@@ -4,13 +4,13 @@ import nextTick from './next-tick'
 
 function once (fn) {
   return function () {
-    if( fn ) fn.apply(this, arguments)
+    if (fn) fn.apply(this, arguments)
     fn = null
   }
 }
 
 function isObjectLike (x) {
-  return ( typeof x === 'object' || typeof x === 'function' )
+  return (typeof x === 'object' || typeof x === 'function')
 }
 
 function isThenable (x) {
@@ -24,7 +24,7 @@ function runThenable (then, xThen, p, x, resolve, reject) {
     }, function (reason) {
       xThen(p, reason, false, resolve, reject)
     })
-  } catch(err) {
+  } catch (err) {
     xThen(p, err, false, resolve, reject)
   }
 }
@@ -32,12 +32,12 @@ function runThenable (then, xThen, p, x, resolve, reject) {
 function xThen (p, x, fulfilled, resolve, reject) {
   var then
 
-  if( x && isObjectLike(x) ) {
+  if (x && isObjectLike(x)) {
     try {
-      if( x === p ) throw new TypeError('A promise can not be resolved by itself')
+      if (x === p) throw new TypeError('A promise can not be resolved by itself')
       then = x.then
 
-      if( fulfilled && typeof then === 'function' ) {
+      if (fulfilled && typeof then === 'function') {
         runThenable(then, once(xThen), p, x, resolve, reject)
       } else {
         (fulfilled ? resolve : reject)(x)
@@ -57,27 +57,27 @@ Parole.onUncaught = function (_onUncaught) {
 }
 
 function _runQueue (queue, is_uncaught, value) {
-  for( var i = 0, n = queue.length ; i < n ; i++ ) queue[i]()
+  for (var i = 0, n = queue.length; i < n; i++) queue[i]()
   queue.splice()
-  if( is_uncaught && onUncaught ) onUncaught(value)
+  if (is_uncaught && onUncaught) onUncaught(value)
 }
 
 function Parole (resolver) {
-  if( !(this instanceof Parole) ) return new Parole(resolver)
+  if (!(this instanceof Parole)) return new Parole(resolver)
 
-  var p = this,
-      reject = function (reason) {
-        if( p.fulfilled || p.rejected ) return
-        p.rejected = true
-        p.value = reason
-        nextTick(function () { _runQueue(p.queue, !p.caught, p.value) })
-      }
+  var p = this
+  var reject = function (reason) {
+    if (p.fulfilled || p.rejected) return
+    p.rejected = true
+    p.value = reason
+    nextTick(function () { _runQueue(p.queue, !p.caught, p.value) })
+  }
 
   p.queue = []
 
   resolver(function (value) {
     xThen(p, value, true, function (result) {
-      if( p.fulfilled || p.rejected ) return
+      if (p.fulfilled || p.rejected) return
       p.fulfilled = true
       p.value = result
       nextTick(function () { _runQueue(p.queue) })
@@ -88,28 +88,26 @@ function Parole (resolver) {
 Parole.prototype.then = function (onFulfilled, onRejected) {
   var p = this
 
-  if( onRejected instanceof Function ) p.caught = true
+  if (onRejected instanceof Function) p.caught = true
 
   return new Parole(function (resolve, reject) {
-
     function complete () {
       var then = p.fulfilled ? onFulfilled : onRejected
-      if( typeof then === 'function' ) {
+      if (typeof then === 'function') {
         try {
-          resolve( then(p.value) )
-        } catch(reason) {
-          reject( reason )
+          resolve(then(p.value))
+        } catch (reason) {
+          reject(reason)
         }
-      } else if( p.fulfilled ) resolve(p.value)
+      } else if (p.fulfilled) resolve(p.value)
       else reject(p.value)
     }
 
-    if( !p.fulfilled && !p.rejected ) {
+    if (!p.fulfilled && !p.rejected) {
       p.queue.push(complete)
     } else {
       nextTick(complete)
     }
-
   })
 }
 
@@ -128,7 +126,7 @@ Parole.defer = function () {
   return deferred
 }
 
-Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x) }
+Parole.when = function (x) { return (x && x.then) ? x : Parole.resolve(x) }
 
 Parole.resolve = function (value) {
   return new Parole(function (resolve) {
@@ -150,22 +148,22 @@ Parole.all = function (promises) {
       var addresult = function (result) {
         results[i] = result
         waiting_promises--
-        if( !waiting_promises ) resolve(results)
+        if (!waiting_promises) resolve(results)
       }
-      if( isThenable(promise) ) promise.then.call(promise, addresult, reject)
+      if (isThenable(promise)) promise.then.call(promise, addresult, reject)
       else addresult(promise)
     })
-    if( !results.length ) resolve(results)
+    if (!results.length) resolve(results)
   })
 }
 
 Parole.race = function (promises) {
   return new Parole(function (resolve, reject) {
     promises.forEach(function (promise) {
-      if( isThenable(promise) ) promise.then.call(promise, resolve, reject)
+      if (isThenable(promise)) promise.then.call(promise, resolve, reject)
       else resolve(promise)
     })
-    if( !promises.length ) resolve()
+    if (!promises.length) resolve()
   })
 }
 
