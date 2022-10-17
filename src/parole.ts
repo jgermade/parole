@@ -60,29 +60,29 @@ export class Parole {
   state: PromiseStates = PENDING
   
   private isCompleted: boolean = false
-  private readonly fulfillQueue: Function[] = []
-  private readonly rejectQueue: Function[] = []
+  private fulfillQueue: Function[] | null = []
+  private rejectQueue: Function[] | null = []
 
   private doComplete (value: any, state: PromiseStates): void {
     if (this.isCompleted) return
     this.isCompleted = true
+
     this.value = value
     this.state = state
 
     nextTick(() => {
-      state === FULFILLED
-        ? this.rejectQueue.splice(0, this.rejectQueue.length)
-        : this.fulfillQueue.splice(0, this.fulfillQueue.length)
-
       ;(
         state === FULFILLED
-          ? this.fulfillQueue.splice(0, this.fulfillQueue.length)
-          : this.rejectQueue.splice(0, this.rejectQueue.length)
-      ).forEach((run) => run(value))
+          ? this.fulfillQueue
+          : this.rejectQueue
+      )?.forEach((run) => run(value))
+
+      this.fulfillQueue = null
+      this.rejectQueue = null
     })
   }
 
-  private resolve (x: any): void {
+  private doResolve (x: any): void {
     try {
       if (x === this) throw new TypeError('resolve value is the promise itself')
 
@@ -92,7 +92,7 @@ export class Parole {
       if (isFunction(xThen)) {
         xThen.call(
           x,
-          (_x: any) => !this.isCompleted && this.resolve(_x),
+          (_x: any) => !this.isCompleted && this.doResolve(_x),
           (_r: any) => this.doComplete(_r, REJECTED),
         )
       } else {
@@ -103,15 +103,15 @@ export class Parole {
     }
   }
 
-  private reject (reason: any): void {
+  private doReject (reason: any): void {
     this.doComplete(reason, REJECTED)
   }
 
   constructor (runFn: Function) {
     try {
-      runFn(this.resolve.bind(this), this.reject.bind(this))
+      runFn(this.doResolve.bind(this), this.doReject.bind(this))
     } catch (err) {
-      this.reject(err)
+      this.doReject(err)
     }
   }
 
@@ -128,8 +128,8 @@ export class Parole {
       if (this.state === FULFILLED) nextTick(() => thenFulfill(this.value))
       else if (this.state === REJECTED) nextTick(() => thenReject(this.value))
       else {
-        this.fulfillQueue.push(thenFulfill)
-        this.rejectQueue.push(thenReject)
+        this.fulfillQueue?.push(thenFulfill)
+        this.rejectQueue?.push(thenReject)
       }
     })
   }

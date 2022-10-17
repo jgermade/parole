@@ -54,9 +54,9 @@ class Parole {
     this.fulfillQueue = [];
     this.rejectQueue = [];
     try {
-      runFn(this.resolve.bind(this), this.reject.bind(this));
+      runFn(this.doResolve.bind(this), this.doReject.bind(this));
     } catch (err) {
-      this.reject(err);
+      this.doReject(err);
     }
   }
   doComplete(value, state) {
@@ -66,11 +66,14 @@ class Parole {
     this.value = value;
     this.state = state;
     nextTick(() => {
-      state === FULFILLED ? this.rejectQueue.splice(0, this.rejectQueue.length) : this.fulfillQueue.splice(0, this.fulfillQueue.length);
-      (state === FULFILLED ? this.fulfillQueue.splice(0, this.fulfillQueue.length) : this.rejectQueue.splice(0, this.rejectQueue.length)).forEach((run) => run(value));
+      var _a;
+      ;
+      (_a = state === FULFILLED ? this.fulfillQueue : this.rejectQueue) == null ? void 0 : _a.forEach((run) => run(value));
+      this.fulfillQueue = null;
+      this.rejectQueue = null;
     });
   }
-  resolve(x) {
+  doResolve(x) {
     try {
       if (x === this)
         throw new TypeError("resolve value is the promise itself");
@@ -78,7 +81,7 @@ class Parole {
       if (isFunction(xThen)) {
         xThen.call(
           x,
-          (_x) => !this.isCompleted && this.resolve(_x),
+          (_x) => !this.isCompleted && this.doResolve(_x),
           (_r) => this.doComplete(_r, REJECTED)
         );
       } else {
@@ -88,11 +91,12 @@ class Parole {
       this.doComplete(err, REJECTED);
     }
   }
-  reject(reason) {
+  doReject(reason) {
     this.doComplete(reason, REJECTED);
   }
   then(onFulfill = null, onReject = null) {
     return new Parole((resolve, reject) => {
+      var _a, _b;
       const thenFulfill = isFunction(onFulfill) ? (x) => runThen(onFulfill, x, resolve, reject) : (x) => resolve(x);
       const thenReject = isFunction(onReject) ? (x) => runThen(onReject, x, resolve, reject) : (x) => reject(x);
       if (this.state === FULFILLED)
@@ -100,8 +104,8 @@ class Parole {
       else if (this.state === REJECTED)
         nextTick(() => thenReject(this.value));
       else {
-        this.fulfillQueue.push(thenFulfill);
-        this.rejectQueue.push(thenReject);
+        (_a = this.fulfillQueue) == null ? void 0 : _a.push(thenFulfill);
+        (_b = this.rejectQueue) == null ? void 0 : _b.push(thenReject);
       }
     });
   }
