@@ -29,15 +29,23 @@ interface DeferredObject {
   reject?: Function
 }
 
+function isObject (o: any): boolean {
+  return typeof o === 'object'
+}
+
+function isFunction (o: any): boolean {
+  return typeof o === 'function'
+}
+
 // const noop = (result: any) => result
 
-export function isThenable (o: any): boolean {
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-  if (!o) return false
-  if (typeof o !== 'object' && typeof o !== 'function') return false
-  if (typeof o.then !== 'function') return false
-  return true
-}
+// export function isThenable (o: any): boolean {
+//   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+//   if (!o) return false
+//   if (typeof o !== 'object' && typeof o !== 'function') return false
+//   if (typeof o.then !== 'function') return false
+//   return true
+// }
 
 function runThen (fn: Function, x: any, resolve: Function, reject: Function): void {
   try {
@@ -79,9 +87,9 @@ export class Parole {
       if (x === this) throw new TypeError('resolve value is the promise itself')
 
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      const xThen = x && (typeof x === 'object' || x instanceof Function) && x.then
+      const xThen = x && (isObject(x) || isFunction(x)) && x.then
 
-      if (xThen instanceof Function) {
+      if (isFunction(xThen)) {
         xThen.call(
           x,
           (_x: any) => !this.isCompleted && this.resolve(_x),
@@ -109,11 +117,11 @@ export class Parole {
 
   then (onFulfill: any = null, onReject: any = null): Parole {
     return new Parole((resolve: Function, reject: Function) => {
-      const thenFulfill = onFulfill instanceof Function
+      const thenFulfill = isFunction(onFulfill)
         ? (x: any) => runThen(onFulfill, x, resolve, reject)
         : (x: any) => resolve(x)
 
-      const thenReject = onReject instanceof Function
+      const thenReject = isFunction(onReject)
         ? (x: any) => runThen(onReject, x, resolve, reject)
         : (x: any) => reject(x)
 

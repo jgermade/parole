@@ -18,8 +18,7 @@ var __copyProps = (to, from, except, desc) => {
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var parole_exports = {};
 __export(parole_exports, {
-  Parole: () => Parole,
-  isThenable: () => isThenable
+  Parole: () => Parole
 });
 module.exports = __toCommonJS(parole_exports);
 const nextTick = process.nextTick;
@@ -34,14 +33,11 @@ const {
   FULFILLED,
   REJECTED
 } = PromiseStates;
-function isThenable(o) {
-  if (!o)
-    return false;
-  if (typeof o !== "object" && typeof o !== "function")
-    return false;
-  if (typeof o.then !== "function")
-    return false;
-  return true;
+function isObject(o) {
+  return typeof o === "object";
+}
+function isFunction(o) {
+  return typeof o === "function";
 }
 function runThen(fn, x, resolve, reject) {
   try {
@@ -78,8 +74,8 @@ class Parole {
     try {
       if (x === this)
         throw new TypeError("resolve value is the promise itself");
-      const xThen = x && (typeof x === "object" || x instanceof Function) && x.then;
-      if (xThen instanceof Function) {
+      const xThen = x && (isObject(x) || isFunction(x)) && x.then;
+      if (isFunction(xThen)) {
         xThen.call(
           x,
           (_x) => !this.isCompleted && this.resolve(_x),
@@ -97,8 +93,8 @@ class Parole {
   }
   then(onFulfill = null, onReject = null) {
     return new Parole((resolve, reject) => {
-      const thenFulfill = onFulfill instanceof Function ? (x) => runThen(onFulfill, x, resolve, reject) : (x) => resolve(x);
-      const thenReject = onReject instanceof Function ? (x) => runThen(onReject, x, resolve, reject) : (x) => reject(x);
+      const thenFulfill = isFunction(onFulfill) ? (x) => runThen(onFulfill, x, resolve, reject) : (x) => resolve(x);
+      const thenReject = isFunction(onReject) ? (x) => runThen(onReject, x, resolve, reject) : (x) => reject(x);
       if (this.state === FULFILLED)
         nextTick(() => thenFulfill(this.value));
       else if (this.state === REJECTED)

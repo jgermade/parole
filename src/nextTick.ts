@@ -17,7 +17,7 @@ const _global = getGlobalThis() ?? getGlobalWindow()
 
 export const processNextTick = (): Function => _global?.process?.nextTick
 
-export const requestAnimationFrameNextTick = ((window: object, prefixes, i, p) => {
+export const requestAnimationFrameNextTick = ((window: object, prefixes, i) => {
   let fnc
   while (!fnc && i < prefixes.length) {
     fnc = _global[prefixes[i++] + 'equestAnimationFrame']
