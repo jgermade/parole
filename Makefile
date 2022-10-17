@@ -15,54 +15,17 @@ install:; npm install
 i: install
 
 build: node_modules
-	@$(shell npm bin)/rollup parole.js --file dist/parole.js --format cjs
-	@$(shell npm bin)/rollup parole.js --file dist/parole.umd.js --format umd --name "Parole"
+	esbuild src/* --format=cjs --outdir=dist
 
 min:
 	@echo "minified version"
 	@$(shell npm bin)/uglifyjs dist/parole.umd.js -o dist/parole.min.js -c -m
 
-lint:
-	@echo "checking syntax"
-	@$(shell npm bin)/eslint lib
+eslint: node_modules
+	eslint src
 
-custom-tests:
-	@echo "passing es6 methods tests"
-	@$(shell npm bin)/mocha tests/*-test.js --exit
-
-test-new:
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-new.js
-
-test-defer:
-	@$(shell npm bin)/eslint src/defer.js
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-defer.js
-
-test-future:
-	@$(shell npm bin)/eslint src/future.js
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-future.js
-
-promises-aplus-tests: export TEST_JS = normal
-promises-aplus-tests:
-	@echo "passing promises-aplus tests"
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
-
-promises-aplus-tests.min: export TEST_JS = min
-promises-aplus-tests.min:
-	@echo "passing promises-aplus tests"
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
-
-karma: export TEST_JS = normal
-karma:
-	@echo "passing browser tests (karma)"
-	@$(shell npm bin)/karma start karma.conf.js
-
-karma.min: export TEST_JS = min
-karma.min:
-	@echo "passing browser tests (karma)"
-	@$(shell npm bin)/karma start karma.conf.js
-
-test: node_modules
-
+test: node_modules eslint build
+	promises-aplus-tests ./tests/parole.adapter.cjs
 
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version

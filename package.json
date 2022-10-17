@@ -7,7 +7,6 @@
   "scripts": {
     "test": "make test"
   },
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/kiltjs/parole.git"
@@ -26,6 +25,9 @@
   },
   "homepage": "https://github.com/kiltjs/parole#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "esbuild": "^0.15.11",
     "eslint": "8.25.0",
     "eslint-config-standard": "17.0.0",
     "eslint-config-standard-with-typescript": "23.0.0",
@@ -34,7 +36,8 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "6.1.0",
     "eslint-plugin-react": "7.31.10",
-    "promises-aplus-tests": "2.1.2"
+    "promises-aplus-tests": "^2.1.2",
+    "typescript": "^4.8.4"
   },
   "dependencies": {}
 }

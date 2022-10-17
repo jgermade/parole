@@ -27,7 +27,7 @@ const custom_rules = {
   'multiline-ternary': ['off'],
 }
 
-export default {
+module.exports = {
   root: true,
   env: {
     es6: true,
@@ -38,20 +38,6 @@ export default {
   ],
   rules: custom_rules,
   overrides: [
-    {
-      files: ['{,**/}*.jsx'],
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-      plugins: ['react'],
-      rules: {
-        ...custom_rules,
-        'react/jsx-uses-react': 'error',
-        'react/jsx-uses-vars': 'error',
-      },
-    },
     {
       files: ['{,**/}*.ts'],
       parser: '@typescript-eslint/parser',
@@ -66,15 +52,7 @@ export default {
       ],
       rules: {
         ...custom_rules,
-        '@typescript-eslint/naming-convention': [
-          'error',
-          {
-            selector: 'variable',
-            types: ['boolean'],
-            format: ['snake_case', 'camelCase'],
-            // format: ['snake_case', 'camelCase', 'PascalCase'],
-          },
-        ],
+        '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
       },
     },
     {

@@ -1,238 +1,124 @@
-'use strict';
-
-// from: https://github.com/medikoo/next-tick
-var nextTick = (function () {
-
-  // Node.js
-  if( typeof process === 'object' && process && typeof process.nextTick === 'function' ) {
-		return process.nextTick
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
-
-  // Removed due to issues with touchmove:
-  //
-  // if( 'Promise' in global && typeof global.Promise.resolve === 'function' ) return (function (resolved) {
-  //   return resolved.then.bind(resolved);
-  // })( global.Promise.resolve() );
-  //
-  // https://stackoverflow.com/questions/32446715/why-is-settimeout-game-loop-experiencing-lag-when-touchstart-event-fires/35668492
-  // https://bugs.chromium.org/p/chromium/issues/detail?id=567800
-    
-  // Removed due to issues with webview:
-  //
-  // from: https://github.com/wesleytodd/browser-next-tick
-  // var raf_prefixes = 'oR msR mozR webkitR r'.split(' ')
-  // for( var i = raf_prefixes.length - 1 ; i >= 0 ; i-- ) {
-  //   if( window[raf_prefixes[i] + 'equestAnimationFrame'] ) return window[raf_prefixes[i] + 'equestAnimationFrame'].bind(window);
-  // }
-  
-  // MutationObserver
-  if( 'MutationObserver' in window || 'WebKitMutationObserver' in window ) return (function (Observer, node) {
-    var queue = [],
-        i = 0;
-
-    function _launchNextTick () {
-      node.data = (i = ++i % 2);
-    }
-
-    var observer = new Observer(function () {
-      var _callback = queue.shift();
-      if( queue.length > 0 )  _launchNextTick();
-      if( _callback instanceof Function ) _callback();
-      // observer.disconnect()
-    });
-    observer.observe(node, { characterData: true });
-
-    return function (callback) {
-      queue.push(callback);
-      _launchNextTick();
-    }
-  })( window.MutationObserver || window.WebKitMutationObserver, document.createTextNode('') )
-
-  var _ensureCallable = function (fn) {
-    if (typeof fn !== 'function') throw new TypeError(fn + ' is not a Function')
-    return fn
-  };
-
-  // W3C Draft
-	// http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/setImmediate/Overview.html
-	if (typeof setImmediate === 'function') {
-		return function (cb) { setImmediate(_ensureCallable(cb)); }
-	}
-
-	// Wide available standard
-	if ((typeof setTimeout === 'function') || (typeof setTimeout === 'object')) {
-		return function (cb) { setTimeout(_ensureCallable(cb), 0); }
-	}
-
-})();
-
-/* global process */
-
-function once (fn) {
-  return function () {
-    if( fn ) fn.apply(this, arguments);
-    fn = null;
-  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var parole_exports = {};
+__export(parole_exports, {
+  Parole: () => Parole
+});
+module.exports = __toCommonJS(parole_exports);
+var import_nextTick = require("./nextTick");
+const PENDING = 0;
+const FULFILLED = 1;
+const REJECTED = -1;
+var PromiseStates = /* @__PURE__ */ ((PromiseStates2) => {
+  PromiseStates2[PromiseStates2["PENDING"] = 0] = "PENDING";
+  PromiseStates2[PromiseStates2["FULFILLED"] = 1] = "FULFILLED";
+  PromiseStates2[PromiseStates2["REJECTED"] = 2] = "REJECTED";
+  return PromiseStates2;
+})(PromiseStates || {});
+function isThenable(o) {
+  if (!o)
+    return false;
+  if (typeof o !== "object" && typeof o !== "function")
+    return false;
+  if (typeof o.then !== "function")
+    return false;
+  return true;
 }
-
-function isObjectLike (x) {
-  return ( typeof x === 'object' || typeof x === 'function' )
-}
-
-function isThenable (x) {
-  return isObjectLike(x) && 'then' in x
-}
-
-function runThenable (then, xThen, p, x, resolve, reject) {
-  try {
-    then.call(x, function (value) {
-      xThen(p, value, true, resolve, reject);
-    }, function (reason) {
-      xThen(p, reason, false, resolve, reject);
-    });
-  } catch(err) {
-    xThen(p, err, false, resolve, reject);
-  }
-}
-
-function xThen (p, x, fulfilled, resolve, reject) {
-  var then;
-
-  if( x && isObjectLike(x) ) {
-    try {
-      if( x === p ) throw new TypeError('A promise can not be resolved by itself')
-      then = x.then;
-
-      if( fulfilled && typeof then === 'function' ) {
-        runThenable(then, once(xThen), p, x, resolve, reject);
-      } else {
-        (fulfilled ? resolve : reject)(x);
-      }
-    } catch (reason) {
-      reject(reason);
-    }
+function runThenQueue(value, state, queue) {
+  if (state === FULFILLED) {
+    queue.forEach(([onFulfill = null]) => onFulfill == null ? void 0 : onFulfill(value));
   } else {
-    (fulfilled ? resolve : reject)(x);
+    queue.forEach(([, onReject]) => onReject == null ? void 0 : onReject(value));
   }
 }
-
-var onUncaught = null;
-
-Parole.onUncaught = function (_onUncaught) {
-  onUncaught = _onUncaught;
-};
-
-function _runQueue (queue, is_uncaught, value) {
-  for( var i = 0, n = queue.length ; i < n ; i++ ) queue[i]();
-  queue.splice();
-  if( is_uncaught && onUncaught ) onUncaught(value);
-}
-
-function Parole (resolver) {
-  if( !(this instanceof Parole) ) return new Parole(resolver)
-
-  var p = this,
-      reject = function (reason) {
-        if( p.fulfilled || p.rejected ) return
-        p.rejected = true;
-        p.value = reason;
-        nextTick(function () { _runQueue(p.queue, !p.caught, p.value); });
-      };
-
-  p.queue = [];
-
-  resolver(function (value) {
-    xThen(p, value, true, function (result) {
-      if( p.fulfilled || p.rejected ) return
-      p.fulfilled = true;
-      p.value = result;
-      nextTick(function () { _runQueue(p.queue); });
-    }, reject);
-  }, reject);
-}
-
-Parole.prototype.then = function (onFulfilled, onRejected) {
-  var p = this;
-
-  if( onRejected instanceof Function ) p.caught = true;
-
-  return new Parole(function (resolve, reject) {
-
-    function complete () {
-      var then = p.fulfilled ? onFulfilled : onRejected;
-      if( typeof then === 'function' ) {
-        try {
-          resolve( then(p.value) );
-        } catch(reason) {
-          reject( reason );
+class Parole {
+  constructor(runClosure) {
+    this.value = null;
+    this.state = PENDING;
+    this.resolveCalled = false;
+    this.thenQueue = [];
+    runClosure(this.resolve.bind(this), this.reject.bind(this));
+  }
+  resolve(x) {
+    if (this.resolveCalled)
+      return;
+    if (x === this)
+      throw new TypeError("resolve value is the promise itself");
+    let hasThen;
+    try {
+      hasThen = isThenable(x);
+    } catch (err) {
+      this.reject(err);
+      return;
+    }
+    if (hasThen) {
+      try {
+        x.then(
+          this.resolve.bind(this),
+          this.reject.bind(this)
+        );
+      } catch (err) {
+        if (this.state === PENDING) {
+          this.reject(err);
         }
-      } else if( p.fulfilled ) resolve(p.value);
-      else reject(p.value);
-    }
-
-    if( !p.fulfilled && !p.rejected ) {
-      p.queue.push(complete);
+      }
     } else {
-      nextTick(complete);
+      this.resolveCalled = true;
+      this.value = x;
+      this.state = FULFILLED;
+      (0, import_nextTick.nextTick)(() => runThenQueue(this.value, this.state, this.thenQueue));
     }
-
-  })
-};
-
-Parole.prototype.catch = function (onRejected) {
-  return this.then(null, onRejected)
-};
-
-// Promise methods
-
-Parole.defer = function () {
-  var deferred = {};
-  deferred.promise = new Parole(function (resolve, reject) {
-    deferred.resolve = resolve;
-    deferred.reject = reject;
-  });
-  return deferred
-};
-
-Parole.when = function (x) { return ( x && x.then ) ? x : Parole.resolve(x) };
-
-Parole.resolve = function (value) {
-  return new Parole(function (resolve) {
-    resolve(value);
-  })
-};
-
-Parole.reject = function (value) {
-  return new Parole(function (resolve, reject) {
-    reject(value);
-  })
-};
-
-Parole.all = function (promises) {
-  var waiting_promises = promises.length;
-  return new Parole(function (resolve, reject) {
-    var results = new Array(waiting_promises);
-    promises.forEach(function (promise, i) {
-      var addresult = function (result) {
-        results[i] = result;
-        waiting_promises--;
-        if( !waiting_promises ) resolve(results);
-      };
-      if( isThenable(promise) ) promise.then.call(promise, addresult, reject);
-      else addresult(promise);
+  }
+  reject(reason) {
+    if (this.resolveCalled)
+      return;
+    this.resolveCalled = true;
+    this.value = reason;
+    this.state = REJECTED;
+    (0, import_nextTick.nextTick)(() => runThenQueue(this.value, this.state, this.thenQueue));
+  }
+  then(onFulfill = null, onReject = null) {
+    this.thenQueue.push([
+      typeof onFulfill === "function" ? onFulfill : null,
+      typeof onReject === "function" ? onReject : null
+    ]);
+    return this;
+  }
+  catch(onReject = null) {
+    this.thenQueue.push([
+      null,
+      typeof onReject === "function" ? onReject : null
+    ]);
+    return this;
+  }
+  static resolve(x) {
+    return new Parole((resolve) => resolve(x));
+  }
+  static reject(reason) {
+    return new Parole((resolve, reject) => reject(reason));
+  }
+  static defer() {
+    const deferred = {};
+    deferred.promise = new Parole((resolve, reject) => {
+      deferred.resolve = resolve;
+      deferred.reject = reject;
     });
-    if( !results.length ) resolve(results);
-  })
-};
-
-Parole.race = function (promises) {
-  return new Parole(function (resolve, reject) {
-    promises.forEach(function (promise) {
-      if( isThenable(promise) ) promise.then.call(promise, resolve, reject);
-      else resolve(promise);
-    });
-    if( !promises.length ) resolve();
-  })
-};
-
-module.exports = Parole;
+    return deferred;
+  }
+}
