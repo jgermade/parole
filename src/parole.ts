@@ -28,26 +28,14 @@ function isFunction (o: any): boolean {
   return typeof o === 'function'
 }
 
-// function runThen (fn: Function, x: any, resolve: Function, reject: Function): void {
-//   try {
-//     resolve(fn(x))
-//   } catch (err) {
-//     reject(err)
-//   }
-// }
-
 export class Parole {
   value: any = null
   state: ParoleStates = PENDING
   
-  private isCompleted: boolean = false
   private fulfillQueue: Function[] | null = []
   private rejectQueue: Function[] | null = []
 
   private doComplete (value: any, state: ParoleStates): void {
-    if (this.isCompleted) return
-    this.isCompleted = true
-
     this.value = value
     this.state = state
 
@@ -62,12 +50,15 @@ export class Parole {
       queue?.forEach((run) => {
         try {
           run(value)
-        } catch (err) { /* noop */ }
+        } catch (err) {
+          this.doComplete(err, REJECTED)
+        }
       })
     })
   }
 
   private doResolve (x: any): void {
+    let executed = false
     try {
       if (x === this) throw new TypeError('resolve value is the promise itself')
 
@@ -76,13 +67,23 @@ export class Parole {
       if (isFunction(xThen)) {
         xThen.call(
           x,
-          (_x: any) => !this.isCompleted && this.doResolve(_x),
-          (_r: any) => this.doComplete(_r, REJECTED),
+          (_x: any) => {
+            if (executed) return
+            executed = true
+            this.doResolve(_x)
+          },
+          (_r: any) => {
+            if (executed) return
+            executed = true
+            this.doComplete(_r, REJECTED)
+          },
         )
       } else {
+        if (executed) return
         this.doComplete(x, FULFILLED)
       }
     } catch (err) {
+      if (executed) return
       this.doComplete(err, REJECTED)
     }
   }
@@ -140,7 +141,7 @@ export class Parole {
   }
 
   static race (list: Parole[]): Parole {
-    return new Parole((resolve?: Function, reject?: Function) => {
+    return new Parole((resolve: Function, reject: Function) => {
       list.forEach(promise => promise.then(resolve, reject))
     })
   }
@@ -149,7 +150,7 @@ export class Parole {
     const results = new Array(list.length)
     let pendingResults: number = list.length
 
-    return new Parole((resolve: Function, reject?: Function) => {
+    return new Parole((resolve: Function, reject: Function) => {
       list.forEach((promise, i) => promise.then((x: any) => {
         results[i] = x
 

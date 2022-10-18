@@ -1,7 +1,9 @@
 
 # Parole
 
-[<img src="https://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo" title="Promises/A+ 1.0 compliant" align="right" />](https://promisesaplus.com/)
+[<img src="https://raw.githubusercontent.com/promises-aplus/promises-spec/master/logo.svg" alt="Promises/A+ logo" width="82px" height="82px" title="Promises/A+ 1.0 compliant" align="right" />](https://promisesaplus.com/)
+
+<!-- [<img src="https://promisesaplus.com/assets/logo-small.png" alt="Promises/A+ logo" title="Promises/A+ 1.0 compliant" align="right" />](https://promisesaplus.com/) -->
 
 Another ES6 promise implementation ([compliant](https://github.com/promises-aplus/promises-tests) with [Promises/A+](https://github.com/promises-aplus/promises-spec))
 
@@ -12,10 +14,10 @@ Another ES6 promise implementation ([compliant](https://github.com/promises-aplu
 
 ## Installation
 ```.sh
-npm install parole --save
+npm install parole
 
 # alternatively you can use bower (minified version by default)
-bower install parole --save
+yarn add parole
 ```
 
 ### ES6 fulfill
@@ -32,29 +34,31 @@ if( !window.Promise ) {
 
 ### Example
 ``` js
-new Parole(function (resolve, reject) {
-        resolve('gogogo!');
-    })
+new Parole((resolve, reject) => {
+    resolve('gogogo!')
+  })
 
-    .then(function (result) {
-        console.log('checkpoint 1', result);
-        throw 'whoops!';
-    })
+  .then((result) => {
+    console.log('checkpoint 1', result)
+    throw 'whoops!'
+  })
 
-    .then(function (result) {
-        console.log('checkpoint 2', result);
-    },function (result) {
-        console.log('checkpoint 2.1', result);
-        return new Parole(function (resolve, reject) {
-            setTimeout(function () { resolve('all right!'); }, 400);
-        });
-    })
+  .then(
+    (result) => {
+      console.log('checkpoint 2', result)
+    },
+    (result) => {
+      console.log('checkpoint 2.1', result)
+      return new Parole((resolve, reject) => {
+        setTimeout(() => resolve('all right!'), 400)
+      })
+    },
+  )
 
-    .then(function (result) {
-        console.log('checkpoint 3', result);
-    }, function (reason) {
-        console.log('checkpoint 3.1', reason);
-    })
+  .then(
+    (result) => console.log('checkpoint 3', result),
+    (reason) => console.log('checkpoint 3.1', reason),
+  )
 ;
 ```
 > output
@@ -66,7 +70,3 @@ checkpoint 2.1 whoops!
 checkpoint 3 all right!
 ```
 
-### Tests
-``` sh
-make test
-```

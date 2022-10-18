@@ -14,8 +14,13 @@ node_modules:; npm install
 install:; npm install
 i: install
 
-build: node_modules
-	esbuild src/* --format=cjs --outdir=dist
+build.cjs: node_modules
+	esbuild src/* --format=cjs --outdir=dist/cjs --minify
+
+build.esm: node_modules
+	esbuild src/* --format=esm --outdir=dist/esm
+
+build: build.cjs build.esm
 
 min:
 	@echo "minified version"
