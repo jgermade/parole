@@ -2,7 +2,7 @@
 
 import { nextTick } from './nextTick'
 
-enum PromiseStates {
+enum ParoleStates {
   PENDING = 'PENDING',
   FULFILLED = 'FULFILLED',
   REJECTED = 'REJECTED',
@@ -12,7 +12,7 @@ const {
   PENDING,
   FULFILLED,
   REJECTED,
-} = PromiseStates
+} = ParoleStates
 
 interface DeferredObject {
   promise?: Parole
@@ -38,13 +38,13 @@ function isFunction (o: any): boolean {
 
 export class Parole {
   value: any = null
-  state: PromiseStates = PENDING
+  state: ParoleStates = PENDING
   
   private isCompleted: boolean = false
   private fulfillQueue: Function[] | null = []
   private rejectQueue: Function[] | null = []
 
-  private doComplete (value: any, state: PromiseStates): void {
+  private doComplete (value: any, state: ParoleStates): void {
     if (this.isCompleted) return
     this.isCompleted = true
 
