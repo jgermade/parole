@@ -1,10 +1,6 @@
-// import { nextTick } from './nextTick'
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
-const nextTick = process.nextTick
-
-// const PENDING = 'PENDING'
-// const FULFILLED = 'FULFILLED'
-// const REJECTED = 'REJECTED'
+import { nextTick } from './nextTick'
 
 enum PromiseStates {
   PENDING = 'PENDING',
@@ -17,11 +13,6 @@ const {
   FULFILLED,
   REJECTED,
 } = PromiseStates
-
-// interface ThenQueueEntry {
-//   onFulfill: Function | null
-//   onReject: Function | null
-// }
 
 interface DeferredObject {
   promise?: Parole
@@ -37,23 +28,13 @@ function isFunction (o: any): boolean {
   return typeof o === 'function'
 }
 
-// const noop = (result: any) => result
-
-// export function isThenable (o: any): boolean {
-//   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-//   if (!o) return false
-//   if (typeof o !== 'object' && typeof o !== 'function') return false
-//   if (typeof o.then !== 'function') return false
-//   return true
+// function runThen (fn: Function, x: any, resolve: Function, reject: Function): void {
+//   try {
+//     resolve(fn(x))
+//   } catch (err) {
+//     reject(err)
+//   }
 // }
-
-function runThen (fn: Function, x: any, resolve: Function, reject: Function): void {
-  try {
-    resolve(fn(x))
-  } catch (err) {
-    reject(err)
-  }
-}
 
 export class Parole {
   value: any = null
@@ -71,14 +52,14 @@ export class Parole {
     this.state = state
 
     nextTick(() => {
-      ;(
-        state === FULFILLED
-          ? this.fulfillQueue
-          : this.rejectQueue
-      )?.forEach((run) => run(value))
+      const queue = state === FULFILLED
+        ? this.fulfillQueue
+        : this.rejectQueue
 
       this.fulfillQueue = null
       this.rejectQueue = null
+      
+      queue?.forEach((run) => run(value))
     })
   }
 
@@ -86,7 +67,6 @@ export class Parole {
     try {
       if (x === this) throw new TypeError('resolve value is the promise itself')
 
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       const xThen = x && (isObject(x) || isFunction(x)) && x.then
 
       if (isFunction(xThen)) {
@@ -118,11 +98,11 @@ export class Parole {
   then (onFulfill: any = null, onReject: any = null): Parole {
     return new Parole((resolve: Function, reject: Function) => {
       const thenFulfill = isFunction(onFulfill)
-        ? (x: any) => runThen(onFulfill, x, resolve, reject)
+        ? (x: any) => { try { resolve(onFulfill(x)) } catch (err) { reject(err) } }
         : (x: any) => resolve(x)
 
       const thenReject = isFunction(onReject)
-        ? (x: any) => runThen(onReject, x, resolve, reject)
+        ? (x: any) => { try { resolve(onReject(x)) } catch (err) { reject(err) } }
         : (x: any) => reject(x)
 
       if (this.state === FULFILLED) nextTick(() => thenFulfill(this.value))
@@ -153,5 +133,25 @@ export class Parole {
       deferred.reject = reject
     })
     return deferred
+  }
+
+  static race (list: Parole[]): Parole {
+    return new Parole((resolve?: Function, reject?: Function) => {
+      list.forEach(promise => promise.then(resolve, reject))
+    })
+  }
+
+  static all (list: Parole[]): Parole {
+    const results = new Array(list.length)
+    let pendingResults: number = list.length
+
+    return new Parole((resolve: Function, reject?: Function) => {
+      list.forEach((promise, i) => promise.then((x: any) => {
+        results[i] = x
+
+        pendingResults && pendingResults--
+        if (!pendingResults) resolve(results)
+      }, reject))
+    })
   }
 }

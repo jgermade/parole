@@ -21,7 +21,7 @@ __export(parole_exports, {
   Parole: () => Parole
 });
 module.exports = __toCommonJS(parole_exports);
-const nextTick = process.nextTick;
+var import_nextTick = require("./nextTick");
 var PromiseStates = /* @__PURE__ */ ((PromiseStates2) => {
   PromiseStates2["PENDING"] = "PENDING";
   PromiseStates2["FULFILLED"] = "FULFILLED";
@@ -38,13 +38,6 @@ function isObject(o) {
 }
 function isFunction(o) {
   return typeof o === "function";
-}
-function runThen(fn, x, resolve, reject) {
-  try {
-    resolve(fn(x));
-  } catch (err) {
-    reject(err);
-  }
 }
 class Parole {
   constructor(runFn) {
@@ -65,12 +58,11 @@ class Parole {
     this.isCompleted = true;
     this.value = value;
     this.state = state;
-    nextTick(() => {
-      var _a;
-      ;
-      (_a = state === FULFILLED ? this.fulfillQueue : this.rejectQueue) == null ? void 0 : _a.forEach((run) => run(value));
+    (0, import_nextTick.nextTick)(() => {
+      const queue = state === FULFILLED ? this.fulfillQueue : this.rejectQueue;
       this.fulfillQueue = null;
       this.rejectQueue = null;
+      queue == null ? void 0 : queue.forEach((run) => run(value));
     });
   }
   doResolve(x) {
@@ -97,12 +89,24 @@ class Parole {
   then(onFulfill = null, onReject = null) {
     return new Parole((resolve, reject) => {
       var _a, _b;
-      const thenFulfill = isFunction(onFulfill) ? (x) => runThen(onFulfill, x, resolve, reject) : (x) => resolve(x);
-      const thenReject = isFunction(onReject) ? (x) => runThen(onReject, x, resolve, reject) : (x) => reject(x);
+      const thenFulfill = isFunction(onFulfill) ? (x) => {
+        try {
+          resolve(onFulfill(x));
+        } catch (err) {
+          reject(err);
+        }
+      } : (x) => resolve(x);
+      const thenReject = isFunction(onReject) ? (x) => {
+        try {
+          resolve(onReject(x));
+        } catch (err) {
+          reject(err);
+        }
+      } : (x) => reject(x);
       if (this.state === FULFILLED)
-        nextTick(() => thenFulfill(this.value));
+        (0, import_nextTick.nextTick)(() => thenFulfill(this.value));
       else if (this.state === REJECTED)
-        nextTick(() => thenReject(this.value));
+        (0, import_nextTick.nextTick)(() => thenReject(this.value));
       else {
         (_a = this.fulfillQueue) == null ? void 0 : _a.push(thenFulfill);
         (_b = this.rejectQueue) == null ? void 0 : _b.push(thenReject);
@@ -125,5 +129,22 @@ class Parole {
       deferred.reject = reject;
     });
     return deferred;
+  }
+  static race(list) {
+    return new Parole((resolve, reject) => {
+      list.forEach((promise) => promise.then(resolve, reject));
+    });
+  }
+  static all(list) {
+    const results = new Array(list.length);
+    let pendingResults = list.length;
+    return new Parole((resolve, reject) => {
+      list.forEach((promise, i) => promise.then((x) => {
+        results[i] = x;
+        pendingResults && pendingResults--;
+        if (!pendingResults)
+          resolve(results);
+      }, reject));
+    });
   }
 }
