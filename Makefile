@@ -27,6 +27,9 @@ eslint: node_modules
 test: node_modules eslint build
 	promises-aplus-tests ./tests/parole.adapter.cjs
 
+promise.test: node_modules
+	promises-aplus-tests ./tests/promise.adapter.cjs
+
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version
 
