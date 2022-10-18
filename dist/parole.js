@@ -62,7 +62,12 @@ class Parole {
       const queue = state === FULFILLED ? this.fulfillQueue : this.rejectQueue;
       this.fulfillQueue = null;
       this.rejectQueue = null;
-      queue == null ? void 0 : queue.forEach((run) => run(value));
+      queue == null ? void 0 : queue.forEach((run) => {
+        try {
+          run(value);
+        } catch (err) {
+        }
+      });
     });
   }
   doResolve(x) {

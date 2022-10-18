@@ -59,7 +59,11 @@ export class Parole {
       this.fulfillQueue = null
       this.rejectQueue = null
       
-      queue?.forEach((run) => run(value))
+      queue?.forEach((run) => {
+        try {
+          run(value)
+        } catch (err) { /* noop */ }
+      })
     })
   }
 
