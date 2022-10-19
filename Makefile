@@ -53,7 +53,7 @@ test.promise: node_modules
 test: build test.parole
 
 test.ci:
-	nyc --reporter=lcov $(MAKE) test.parole 
+	nyc --reporter=lcov $(MAKE) -j 2 test.defer test.parole
 
 npm.publish:
 	npm version $(NPM_VERSION)

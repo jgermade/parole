@@ -16,7 +16,6 @@ steps:
 - name: test
   image: node:14
   commands:
-  - make test.defer
   - make test.ci
 
 - name: codecov
