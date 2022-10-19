@@ -10,6 +10,7 @@ import {
 interface Thenable {
   then: Function
   catch?: Function
+  finally?: Function
 }
 
 interface Deferred {
@@ -57,9 +58,6 @@ export function defer (): Deferred {
       }
 
       return promise
-    },
-    catch (onReject: any = null) {
-      return this.then(null, onReject)
     },
   }
 
