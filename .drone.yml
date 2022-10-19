@@ -1,10 +1,13 @@
 
 kind: pipeline
-name: node14-codecov
+name: node14
 
 steps:
 - name: test
   image: node:14
+  environment:
+    CODECOV_TOKEN:
+      from_secret: CODECOV_TOKEN
   commands:
   - npm install
   - make test
