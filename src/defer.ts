@@ -76,9 +76,7 @@ export function defer (): Deferred {
       queue?.forEach((run) => {
         try {
           run(value)
-        } catch (err) {
-          doComplete(err, REJECTED)
-        }
+        } catch (err) { /* noope */ }
       })
     })
   }

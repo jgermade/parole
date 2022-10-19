@@ -40,9 +40,7 @@ export class Future {
       queue?.forEach((run) => {
         try {
           run(value)
-        } catch (err) {
-          this.doComplete(err, REJECTED)
-        }
+        } catch (err) { /* noop */ }
       })
     })
   }
