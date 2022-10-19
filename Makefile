@@ -6,6 +6,10 @@ SHELL := env PATH=$(shell npm bin):$(PATH) /bin/bash -O extglob
 
 # git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
+ifndef FORCE_COLOR
+  export FORCE_COLOR=true
+endif
+
 ifndef NPM_VERSION
   export NPM_VERSION=patch
 endif
