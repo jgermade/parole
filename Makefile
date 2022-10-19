@@ -76,7 +76,7 @@ git.tag: build
 	git push --tags
 	# git push origin $(git_branch)
 
-npm.publish: npm.pushVersion git.tag
+npm.publishOld: npm.pushVersion git.tag
 	# - cd dist && npm publish --access public
 	- npm publish --access public
 	# - node -e "var fs = require('fs'); var pkg = require('./dist/package.json'); pkg.name = 'parole'; fs.writeFile('dist/package.json', JSON.stringify(pkg, null, '  '), 'utf8', function (err) { if( err ) console.log('Error: ' + err); });"
@@ -95,7 +95,7 @@ github.release:
 	@echo ${RELEASE_URL}
 	@true
 
-release: test npm.publish github.release
+release: test npm.publishOld github.release
 
 # DEFAULT TASKS
 
