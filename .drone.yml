@@ -7,14 +7,17 @@ steps:
   image: node:14
   commands:
   - npm install
+
 - name: build
   image: node:14
   commands:
   - make build
+
 - name: test
   image: node:14
   commands:
   - make test.ci
+
 - name: codecov
   image: node:14
   environment:
