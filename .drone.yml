@@ -7,8 +7,6 @@ steps:
   image: node:14
   commands:
   - npm install
-  - make build
-  - make test.ci
 - name: build
   image: node:14
   commands:
