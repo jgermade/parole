@@ -20,6 +20,10 @@ interface DeferredObject {
   reject?: Function
 }
 
+interface Thenable {
+  then: Function
+}
+
 function isObject (o: any): boolean {
   return typeof o === 'object'
 }
@@ -28,12 +32,30 @@ function isFunction (o: any): boolean {
   return typeof o === 'function'
 }
 
+function isIterable (o: any): boolean {
+  return o && isFunction(o[Symbol.iterator])
+}
+
+function isThenable (o: any): boolean {
+  return o && (isObject(o) || isFunction(o)) && isFunction(o.then)
+}
+
+function iterateListPromises (iterable: any, eachPromise: Function, cantIterate: Function) {
+  if (!isIterable(iterable)) return cantIterate()
+  const list = Array.from(iterable)
+  if (list.length) return cantIterate()
+
+  list.forEach((x, i) => {
+    eachPromise(isThenable(x) ? x : Parole.resolve(x), i)
+  })
+}
 export class Parole {
   value: any = null
   state: ParoleStates = PENDING
   
   private fulfillQueue: Function[] | null = []
   private rejectQueue: Function[] | null = []
+  private finallyQueue: Function[] | null = []
 
   private doComplete (value: any, state: ParoleStates): void {
     this.value = value
@@ -54,6 +76,13 @@ export class Parole {
           this.doComplete(err, REJECTED)
         }
       })
+
+      this.finallyQueue?.forEach(run => {
+        try {
+          run()
+        } catch (err) { /* noop */ }
+      })
+      this.finallyQueue = null
     })
   }
 
@@ -123,11 +152,26 @@ export class Parole {
     return this.then(null, onReject)
   }
 
-  static resolve (x: any): Parole {
+  finally (onFinally: any): Parole {
+    if (!isFunction(onFinally) || !this.finallyQueue) return this
+
+    return new Parole((resolve: Function, reject: Function) => {
+      this.finallyQueue?.push(() => {
+        try {
+          onFinally()
+          resolve()
+        } catch (err) {
+          reject(err)
+        }
+      })
+    })
+  }
+
+  static resolve (x?: any): Parole {
     return new Parole((resolve: Function) => resolve(x))
   }
 
-  static reject (reason: any): Parole {
+  static reject (reason?: any): Parole {
     return new Parole((resolve: Function, reject: Function) => reject(reason))
   }
 
@@ -140,23 +184,48 @@ export class Parole {
     return deferred
   }
 
-  static race (list: Parole[]): Parole {
-    return new Parole((resolve: Function, reject: Function) => {
-      list.forEach(promise => promise.then(resolve, reject))
-    })
-  }
-
-  static all (list: Parole[]): Parole {
+  static all (list: Thenable[]): Parole {
     const results = new Array(list.length)
     let pendingResults: number = list.length
 
     return new Parole((resolve: Function, reject: Function) => {
-      list.forEach((promise, i) => promise.then((x: any) => {
-        results[i] = x
+      iterateListPromises(list, (xthen: Thenable, i: number) => {
+        xthen.then((x: any) => {
+          results[i] = x
+  
+          pendingResults && pendingResults--
+          if (!pendingResults) resolve(results)
+        }, reject)
+      }, () => resolve([]))
+    })
+  }
 
-        pendingResults && pendingResults--
-        if (!pendingResults) resolve(results)
-      }, reject))
+  static allSettled (list: Thenable[]): Parole {
+    const results = new Array(list.length)
+    let pendingResults: number = list.length
+
+    return new Parole((resolve: Function) => {
+      iterateListPromises(list, (xthen: Thenable, i: number) => {
+        xthen.then(
+          (value: any) => {
+            results[i] = { status: 'fulfilled', value }
+            pendingResults && pendingResults--
+            if (!pendingResults) resolve(results)
+          },
+          (reason: any) => {
+            results[i] = { status: 'rejected', reason }
+            pendingResults && pendingResults--
+            if (!pendingResults) resolve(results)
+          })
+      }, () => resolve([]))
+    })
+  }
+
+  static race (list: Thenable[]): Parole {
+    return new Parole((resolve: Function, reject: Function) => {
+      iterateListPromises(list, (xthen: Thenable) => {
+        xthen.then(resolve, reject)
+      }, () => resolve())
     })
   }
 }
