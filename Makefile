@@ -41,7 +41,10 @@ upload.codecov:
 	chmod +x codecov
 	./codecov
 
-promise.test: node_modules
+test.future: node_modules
+	promises-aplus-tests ./tests/future.adapter.cjs
+
+test.promise: node_modules
 	promises-aplus-tests ./tests/promise.adapter.cjs
 
 npm.increaseVersion:

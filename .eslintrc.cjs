@@ -18,7 +18,7 @@ const custom_rules = {
     'warn',
     {
       args: 'after-used',
-      argsIgnorePattern: '^_\\w+',
+      argsIgnorePattern: '^_',
     },
   ],
 
