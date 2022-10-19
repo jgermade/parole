@@ -4,7 +4,7 @@ SHELL := env PATH=$(shell npm bin):$(PATH) /bin/bash -O extglob
 .SILENT:
 .PHONY: install build min lint custom-tests test-new test-defer test-future promises-aplus-tests promises-aplus-tests.min karma karma.min test npm.increaseVersion npm.pushVersion git.tag npm.publish github.release release
 
-# git_branch := $(shell git rev-parse --abbrev-ref HEAD)
+git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
 ifndef FORCE_COLOR
   export FORCE_COLOR=true
@@ -54,6 +54,12 @@ test: build test.parole
 
 test.ci:
 	nyc --reporter=lcov $(MAKE) test.parole 
+
+npm.publish:
+	npm version $(NPM_VERSION)
+	git push origin $(git_branch)
+	git push --tags
+	npm publish
 
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version
