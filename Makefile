@@ -1,64 +1,39 @@
-# --- parole
+#!make
+SHELL := env PATH=$(shell npm bin):$(PATH) /bin/bash -O extglob
 
-git_branch := $(shell git rev-parse --abbrev-ref HEAD)
-
+.SILENT:
 .PHONY: install build min lint custom-tests test-new test-defer test-future promises-aplus-tests promises-aplus-tests.min karma karma.min test npm.increaseVersion npm.pushVersion git.tag npm.publish github.release release
+
+# git_branch := $(shell git rev-parse --abbrev-ref HEAD)
 
 ifndef NPM_VERSION
   export NPM_VERSION=patch
 endif
 
-install:
-	npm install
+node_modules:; npm install
+install:; npm install
+i: install
 
-build:
-	@$(shell npm bin)/rollup parole.js --file dist/parole.js --format cjs
-	@$(shell npm bin)/rollup parole.js --file dist/parole.umd.js --format umd --name "Parole"
+build.cjs: node_modules
+	esbuild src/* --format=cjs --outdir=dist/cjs --minify
+
+build.esm: node_modules
+	esbuild src/* --format=esm --outdir=dist/esm
+
+build: build.cjs build.esm
 
 min:
 	@echo "minified version"
 	@$(shell npm bin)/uglifyjs dist/parole.umd.js -o dist/parole.min.js -c -m
 
-lint:
-	@echo "checking syntax"
-	@$(shell npm bin)/eslint lib
+eslint: node_modules
+	eslint src
 
-custom-tests:
-	@echo "passing es6 methods tests"
-	@$(shell npm bin)/mocha tests/*-test.js --exit
+test: node_modules eslint build
+	promises-aplus-tests ./tests/parole.adapter.cjs
 
-test-new:
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-new.js
-
-test-defer:
-	@$(shell npm bin)/eslint src/defer.js
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-defer.js
-
-test-future:
-	@$(shell npm bin)/eslint src/future.js
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter-future.js
-
-promises-aplus-tests: export TEST_JS = normal
-promises-aplus-tests:
-	@echo "passing promises-aplus tests"
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
-
-promises-aplus-tests.min: export TEST_JS = min
-promises-aplus-tests.min:
-	@echo "passing promises-aplus tests"
-	@$(shell npm bin)/promises-aplus-tests tests/promises-aplus-adapter.js
-
-karma: export TEST_JS = normal
-karma:
-	@echo "passing browser tests (karma)"
-	@$(shell npm bin)/karma start karma.conf.js
-
-karma.min: export TEST_JS = min
-karma.min:
-	@echo "passing browser tests (karma)"
-	@$(shell npm bin)/karma start karma.conf.js
-
-test: install lint build min custom-tests promises-aplus-tests promises-aplus-tests.min karma karma.min
+promise.test: node_modules
+	promises-aplus-tests ./tests/promise.adapter.cjs
 
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version

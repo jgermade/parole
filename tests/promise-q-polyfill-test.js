@@ -1,440 +1,393 @@
 /* global describe, it */
 
-if( typeof require !== 'undefined' ) { // if is nodejs (not browser)
-  var Parole = require('../dist/parole');
-  var assert = require('assert');
+if (typeof require !== 'undefined') { // if is nodejs (not browser)
+  var Parole = require('../dist/parole')
+  var assert = require('assert')
 }
 
 describe('promise resolution', function () {
-
-    it('testing resolution', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
-      })
+  it('testing resolution', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
 
       .then(function (result) {
-        assert.equal(result, 'gogogo!');
-        done();
-      });
-
-    });
-
-    it('reject resolution', function(done) {
-
-      Parole(function (resolve, reject) {
-        reject('foobar');
+        assert.equal(result, 'gogogo!')
+        done()
       })
+  })
+
+  it('reject resolution', function (done) {
+    Parole(function (resolve, reject) {
+      reject('foobar')
+    })
 
       .then(function (value) {
-        return 'ok ' + value;
+        return 'ok ' + value
       }).catch(function (reason) {
-        throw 'whoops ' + reason;
+        throw 'whoops ' + reason
       })
 
       .catch(function (reason) {
-        assert.equal(reason, 'whoops foobar');
-        done();
-      });
+        assert.equal(reason, 'whoops foobar')
+        done()
+      })
+  })
 
-    });
-
-    // it("reject uncough", function(done) {
-    //
-    //   assert.throws(function(_done) {
-    //
-    //       Parole(function (resolve, reject) {
-    //         reject('foobar');
-    //       })
-    //
-    //       .catch(function (reason) {
-    //         throw 'uncough';
-    //       });
-    //
-    //       setTimeout(_done, 10);
-    //
-    //   });
-    //   }, /Uncaught \(in promise\)/ );
-    //
-    // });
-
-});
+  // it("reject uncough", function(done) {
+  //
+  //   assert.throws(function(_done) {
+  //
+  //       Parole(function (resolve, reject) {
+  //         reject('foobar');
+  //       })
+  //
+  //       .catch(function (reason) {
+  //         throw 'uncough';
+  //       });
+  //
+  //       setTimeout(_done, 10);
+  //
+  //   });
+  //   }, /Uncaught \(in promise\)/ );
+  //
+  // });
+})
 
 describe('promise interception', function () {
-
-    it('testing interception resolve', function(done) {
-
-      Parole(function (resolve) {
-        resolve('foobar');
-      })
+  it('testing interception resolve', function (done) {
+    Parole(function (resolve) {
+      resolve('foobar')
+    })
 
       .then(function () {
-        return ':)';
+        return ':)'
       })
 
       .then(function (value) {
-        return 'ok ' + value;
+        return 'ok ' + value
       }).catch(function (reason) {
-        throw 'whoops ' + reason;
+        throw 'whoops ' + reason
       })
 
       .then(function (result) {
-        assert.equal(result, 'ok :)');
-        done();
-      });
-
-    });
-
-    it('testing interception resolve to reject', function(done) {
-
-      Parole(function (resolve) {
-        resolve('foobar');
+        assert.equal(result, 'ok :)')
+        done()
       })
+  })
+
+  it('testing interception resolve to reject', function (done) {
+    Parole(function (resolve) {
+      resolve('foobar')
+    })
 
       .then(function () {
-        throw 'oO';
+        throw 'oO'
       })
 
       .then(function (value) {
-        return 'ok ' + value;
+        return 'ok ' + value
       }).catch(function (reason) {
-        throw 'whoops ' + reason;
+        throw 'whoops ' + reason
       })
 
       .catch(function (reason) {
-        assert.equal(reason, 'whoops oO');
-        done();
-      });
-
-    });
-
-    it('testing interception reject', function(done) {
-
-      Parole(function (resolve, reject) {
-        reject('foobar');
+        assert.equal(reason, 'whoops oO')
+        done()
       })
+  })
+
+  it('testing interception reject', function (done) {
+    Parole(function (resolve, reject) {
+      reject('foobar')
+    })
 
       .catch(function () {
-        throw 'oO';
+        throw 'oO'
       })
 
       .then(function (value) {
-        return 'ok ' + value;
+        return 'ok ' + value
       }).catch(function (reason) {
-        throw 'whoops ' + reason;
+        throw 'whoops ' + reason
       })
 
       .catch(function (reason) {
-        assert.equal(reason, 'whoops oO');
-        done();
-      });
-
-    });
-
-    it('testing interception reject to resolve', function(done) {
-
-      Parole(function (resolve, reject) {
-        reject('foobar');
+        assert.equal(reason, 'whoops oO')
+        done()
       })
+  })
+
+  it('testing interception reject to resolve', function (done) {
+    Parole(function (resolve, reject) {
+      reject('foobar')
+    })
 
       .catch(function () {
-        return ':)';
+        return ':)'
       })
 
       .then(function (value) {
-        return 'ok ' + value;
+        return 'ok ' + value
       }).catch(function (reason) {
-        throw 'whoops ' + reason;
+        throw 'whoops ' + reason
       })
 
       .then(function (result) {
-        assert.equal(result, 'ok :)');
-        done();
-      });
-
-    });
-
-    it('testing interception resolve returning promise', function(done) {
-
-      Parole(function (resolve, reject) {
-        reject('foobar');
+        assert.equal(result, 'ok :)')
+        done()
       })
+  })
+
+  it('testing interception resolve returning promise', function (done) {
+    Parole(function (resolve, reject) {
+      reject('foobar')
+    })
 
       .catch(function () {
         return Parole(function (resolve) {
-          resolve(':)');
-        });
+          resolve(':)')
+        })
       })
 
       .then(function (value) {
-        return 'ok ' + value;
+        return 'ok ' + value
       }).catch(function (reason) {
-        throw 'whoops ' + reason;
+        throw 'whoops ' + reason
       })
 
       .then(function (result) {
-        assert.equal(result, 'ok :)');
-        done();
-      });
-
-    });
-
-});
+        assert.equal(result, 'ok :)')
+        done()
+      })
+  })
+})
 
 describe('promise all', function () {
+  it('list resolved', function (done) {
+    var p = Parole.all([
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('foo')
+        }, 1)
+      }),
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('bar')
+        }, 1)
+      }),
+    ])
 
-    it('list resolved', function(done) {
+    p.then(function (results) {
+      assert.equal(results.join('.'), 'foo.bar')
+      done()
+    })
+  })
 
-      var p = Parole.all([
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('foo');
-          }, 1);
-        }),
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('bar');
-          }, 1);
-        })
-      ]);
+  it('list rejected', function (done) {
+    Parole.all([
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('ok')
+        }, 1)
+      }),
+      Parole(function (resolve, reject) {
+        setTimeout(function () {
+          reject('whoops')
+        }, 1)
+      }),
+    ])
+      .catch(function (reason) {
+        assert.equal(reason, 'whoops')
+        done()
+      })
+  })
 
-      p.then(function (results) {
-          assert.equal(results.join('.'), 'foo.bar');
-          done();
-        });
-    });
+  it('list mixed', function (done) {
+    Parole.all([
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('foo')
+        }, 1)
+      }),
+      'bar',
+    ])
+      .then(function (results) {
+        assert.equal(results.join('.'), 'foo.bar')
+        done()
+      })
+  })
 
-    it('list rejected', function(done) {
+  it('list values', function (done) {
+    Parole.all([
+      'foo',
+      'bar',
+    ])
+      .then(function (results) {
+        assert.equal(results.join('.'), 'foo.bar')
+        done()
+      })
+  })
 
-      Parole.all([
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('ok');
-          }, 1);
-        }),
-        Parole(function (resolve, reject) {
-          setTimeout(function () {
-            reject('whoops');
-          }, 1);
-        })
-      ])
-        .catch(function (reason) {
-          assert.equal(reason, 'whoops');
-          done();
-        });
-    });
-
-    it('list mixed', function(done) {
-
-      Parole.all([
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('foo');
-          }, 1);
-        }),
-        'bar'
-      ])
-        .then(function (results) {
-          assert.equal( results.join('.') , 'foo.bar');
-          done();
-        });
-    });
-
-    it('list values', function(done) {
-
-      Parole.all([
-        'foo',
-        'bar'
-      ])
-        .then(function (results) {
-          assert.equal( results.join('.') , 'foo.bar');
-          done();
-        });
-    });
-
-    it('empty list', function(done) {
-
-      Parole.all([])
-        .then(function (results) {
-          assert.equal( results.length , 0);
-          done();
-        });
-    });
-
-});
+  it('empty list', function (done) {
+    Parole.all([])
+      .then(function (results) {
+        assert.equal(results.length, 0)
+        done()
+      })
+  })
+})
 
 describe('promise race', function () {
+  it('resolve', function (done) {
+    Parole.race([
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('winner')
+        }, 10)
+      }),
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('second')
+        }, 20)
+      }),
+      Parole(function (resolve) {
+        setTimeout(function () {
+          resolve('third')
+        }, 30)
+      }),
+    ])
 
-    it('resolve', function(done) {
+      .then(function (result) {
+        assert.equal(result, 'winner')
+        done()
+      })
+  })
 
-      Parole.race([
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('winner');
-          }, 10);
-        }),
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('second');
-          }, 20);
-        }),
-        Parole(function (resolve) {
-          setTimeout(function () {
-            resolve('third');
-          }, 30);
-        })
-      ])
+  it('reject', function (done) {
+    Parole.race([
+      Parole(function (resolve, reject) {
+        setTimeout(function () {
+          reject('winner')
+        }, 10)
+      }),
+      Parole(function (resolve, reject) {
+        setTimeout(function () {
+          reject('second')
+        }, 20)
+      }),
+      Parole(function (resolve, reject) {
+        setTimeout(function () {
+          reject('third')
+        }, 30)
+      }),
+    ])
 
-        .then(function (result) {
-          assert.equal(result, 'winner');
-          done();
-        });
+      .catch(function (reason) {
+        assert.equal(reason, 'winner')
+        setTimeout(done, 1)
+      })
+  })
 
-    });
-
-    it('reject', function(done) {
-
-      Parole.race([
-        Parole(function (resolve, reject) {
-          setTimeout(function () {
-            reject('winner');
-          }, 10);
-        }),
-        Parole(function (resolve, reject) {
-          setTimeout(function () {
-            reject('second');
-          }, 20);
-        }),
-        Parole(function (resolve, reject) {
-          setTimeout(function () {
-            reject('third');
-          }, 30);
-        })
-      ])
-
-        .catch(function (reason) {
-          assert.equal(reason, 'winner');
-          setTimeout(done, 1);
-        });
-
-    });
-
-    it('empty list', function(done) {
-
-      Parole.race([])
-        .then(function (result) {
-          assert.strictEqual(result, undefined);
-          done();
-        });
-
-    });
-
-});
+  it('empty list', function (done) {
+    Parole.race([])
+      .then(function (result) {
+        assert.strictEqual(result, undefined)
+        done()
+      })
+  })
+})
 
 describe('promise then', function () {
+  it('resolve', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
 
-    it('resolve', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
+      .then(function (result) {
+        return Parole.resolve(result)
       })
 
-        .then(function (result) {
-          return Parole.resolve(result);
-        })
+      .then(function (result) {
+        assert.equal(result, 'gogogo!')
+        done()
+      })
+  })
 
-        .then(function (result) {
-          assert.equal(result, 'gogogo!');
-          done();
-        });
+  it('reject', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
 
-    });
-
-    it('reject', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
+      .then(function () {
+        return Parole.reject('whoops!')
       })
 
-        .then(function () {
-          return Parole.reject('whoops!');
-        })
+      .catch(function (result) {
+        assert.equal(result, 'whoops!')
+        done()
+      })
+  })
 
-        .catch(function (result) {
-          assert.equal(result, 'whoops!');
-          done();
-        });
+  it('when resolve', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
 
-    });
-
-    it('when resolve', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
+      .then(function (result) {
+        return Parole.when(result)
       })
 
-        .then(function (result) {
-          return Parole.when(result);
+      .then(function (result) {
+        assert.equal(result, 'gogogo!')
+        done()
+      })
+  })
+
+  it('when reject', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
+
+      .then(function (result) {
+        return Parole.when(result).then(function () {
+          throw 'whoops!'
         })
-
-        .then(function (result) {
-          assert.equal(result, 'gogogo!');
-          done();
-        });
-
-    });
-
-    it('when reject', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
       })
 
-        .then(function (result) {
-          return Parole.when(result).then(function () {
-            throw 'whoops!';
-          });
-        })
+      .catch(function (result) {
+        assert.equal(result, 'whoops!')
+        done()
+      })
+  })
 
-        .catch(function (result) {
-          assert.equal(result, 'whoops!');
-          done();
-        });
+  it('Parole.resolve', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
 
-    });
-
-    it('Parole.resolve', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
+      .then(function (result) {
+        return Parole.resolve(result)
       })
 
-        .then(function (result) {
-          return Parole.resolve(result);
-        })
+      .then(function (result) {
+        assert.equal(result, 'gogogo!')
+        done()
+      })
+  })
 
-        .then(function (result) {
-          assert.equal(result, 'gogogo!');
-          done();
-        });
+  it('Parole.reject', function (done) {
+    Parole(function (resolve) {
+      resolve('gogogo!')
+    })
 
-    });
-
-    it('Parole.reject', function(done) {
-
-      Parole(function (resolve) {
-        resolve('gogogo!');
+      .then(function () {
+        return Parole.reject('whoops!')
       })
 
-        .then(function () {
-          return Parole.reject('whoops!');
-        })
-
-        .catch(function (result) {
-          assert.equal(result, 'whoops!');
-          done();
-        });
-
-    });
-
-});
+      .catch(function (result) {
+        assert.equal(result, 'whoops!')
+        done()
+      })
+  })
+})
