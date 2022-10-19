@@ -30,7 +30,12 @@ eslint: node_modules
 	eslint src
 
 test: node_modules eslint build
-	promises-aplus-tests ./tests/parole.adapter.cjs
+	nyc --reporter=lcov promises-aplus-tests ./tests/parole.adapter.cjs
+
+upload.codecov:
+	curl -Os https://uploader.codecov.io/latest/linux/codecov
+	chmod +x codecov
+	./codecov
 
 promise.test: node_modules
 	promises-aplus-tests ./tests/promise.adapter.cjs
