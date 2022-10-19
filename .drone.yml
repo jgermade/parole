@@ -3,13 +3,21 @@ kind: pipeline
 name: node14
 
 steps:
-- name: test
+- name: install
   image: node:14
   commands:
   - npm install
   - make build
   - make test.ci
+- name: build
+  image: node:14
+  commands:
+  - make build
 - name: test
+  image: node:14
+  commands:
+  - make test.ci
+- name: build
   image: node:14
   environment:
     CODECOV_TOKEN:
