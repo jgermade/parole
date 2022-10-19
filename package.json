@@ -1,8 +1,8 @@
 {
   "name": "parole",
-  "version": "1.1.30",
+  "version": "2.0.0",
   "description": "Another ES6 promise implementation (compliant with Promises/A+)",
-  "main": "dist/cjs/parole.js",
+  "main": "dist/cjs/parole.cjs",
   "module": "dist/esm/parole.js",
   "scripts": {
     "test": "make test"
