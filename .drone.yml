@@ -8,3 +8,4 @@ steps:
   commands:
   - npm install
   - make test
+  - make upload.codecov
