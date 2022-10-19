@@ -1,9 +1,7 @@
 
-const { Future } = require('../dist/cjs/future.js')
+const { Future } = require('../dist/cjs/future')
 
 module.exports = {
-  resolved: x => new Future(resolve => resolve(x)),
-  rejected: reason => new Future((_, reject) => reject(reason)),
   deferred () {
     const deferred = {}
     deferred.promise = new Future((resolve, reject) => {

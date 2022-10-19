@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
 import { nextTick } from './nextTick'
+import {
+  isFunction,
+  isObject,
+} from './type-cast'
 
 enum FutureStates {
   PENDING = 'PENDING',
@@ -14,21 +18,12 @@ const {
   REJECTED,
 } = FutureStates
 
-function isObject (o: any): boolean {
-  return typeof o === 'object'
-}
-
-function isFunction (o: any): boolean {
-  return typeof o === 'function'
-}
-
 export class Future {
   value: any = null
   state: FutureStates = PENDING
   
   private fulfillQueue: Function[] | null = []
   private rejectQueue: Function[] | null = []
-  private finallyQueue: Function[] | null = []
 
   private doComplete (value: any, state: FutureStates): void {
     this.value = value
@@ -49,13 +44,6 @@ export class Future {
           this.doComplete(err, REJECTED)
         }
       })
-
-      this.finallyQueue?.forEach(run => {
-        try {
-          run()
-        } catch (err) { /* noop */ }
-      })
-      this.finallyQueue = null
     })
   }
 

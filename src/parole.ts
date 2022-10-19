@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
 import { Future } from './future'
+import {
+  isIterable,
+  isThenable,
+} from './type-cast'
 
 interface DeferredObject {
   promise?: Parole
@@ -10,22 +14,6 @@ interface DeferredObject {
 
 interface Thenable {
   then: Function
-}
-
-function isObject (o: any): boolean {
-  return typeof o === 'object'
-}
-
-function isFunction (o: any): boolean {
-  return typeof o === 'function'
-}
-
-function isIterable (o: any): boolean {
-  return o && isFunction(o[Symbol.iterator])
-}
-
-function isThenable (o: any): boolean {
-  return o && (isObject(o) || isFunction(o)) && isFunction(o.then)
 }
 
 function iterateListPromises (iterable: any, eachPromise: Function, cantIterate: Function): void {

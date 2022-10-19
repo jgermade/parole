@@ -33,19 +33,27 @@ min:
 eslint: node_modules
 	eslint src
 
-test: node_modules eslint build
-	nyc --reporter=lcov promises-aplus-tests ./tests/parole.adapter.cjs
-
 upload.codecov:
 	curl -Os https://uploader.codecov.io/latest/linux/codecov
 	chmod +x codecov
 	./codecov
 
+test.parole: node_modules
+	nyc --reporter=lcov promises-aplus-tests ./tests/parole.adapter.cjs
+
 test.future: node_modules
 	promises-aplus-tests ./tests/future.adapter.cjs
 
+test.defer: node_modules
+	promises-aplus-tests ./tests/defer.adapter.cjs
+
 test.promise: node_modules
 	promises-aplus-tests ./tests/promise.adapter.cjs
+
+test: build test.parole
+
+test.ci:
+	nyc --reporter=lcov $(MAKE) test.parole 
 
 npm.increaseVersion:
 	npm version ${NPM_VERSION} --no-git-tag-version

@@ -1,5 +1,5 @@
 
-const { Parole } = require('../dist/cjs/parole.js')
+const { Parole } = require('../dist/cjs/parole')
 
 module.exports = {
   resolved: Parole.resolve,
