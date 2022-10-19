@@ -19,7 +19,7 @@ install:; npm install
 i: install
 
 build.cjs: node_modules
-	esbuild src/* --format=cjs --outdir=dist/cjs --minify
+	esbuild src/* --format=cjs --outdir=dist/cjs
 
 build.esm: node_modules
 	esbuild src/* --format=esm --outdir=dist/esm
