@@ -1,6 +1,6 @@
 
 kind: pipeline
-name: node14
+name: node14-codecov
 
 steps:
 - name: test
