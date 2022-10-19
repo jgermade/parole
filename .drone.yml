@@ -17,7 +17,7 @@ steps:
   image: node:14
   commands:
   - make test.ci
-- name: build
+- name: codecov
   image: node:14
   environment:
     CODECOV_TOKEN:
