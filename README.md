@@ -23,6 +23,22 @@ yarn add parole
 ### ES6 fulfill
 > `Parole` implements [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) specs
 
+Implements:
+- Promise.prototype.then
+- Promise.prototype.catch
+- Promise.prototype.finally
+
+Also static methods
+- Promise.resolve
+- Promise.reject
+- Promise.all
+- Promise.allSettled
+- Promise.any
+- Promise.race
+
+Includes:
+- Promise.defer
+
 ``` js
 // parole respects the es6 promise specification
 // you can use parole as global polyfill

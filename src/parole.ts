@@ -40,7 +40,7 @@ function isThenable (o: any): boolean {
   return o && (isObject(o) || isFunction(o)) && isFunction(o.then)
 }
 
-function iterateListPromises (iterable: any, eachPromise: Function, cantIterate: Function) {
+function iterateListPromises (iterable: any, eachPromise: Function, cantIterate: Function): void {
   if (!isIterable(iterable)) return cantIterate()
   const list = Array.from(iterable)
   if (list.length) return cantIterate()
@@ -153,18 +153,16 @@ export class Parole {
   }
 
   finally (onFinally: any): Parole {
-    if (!isFunction(onFinally) || !this.finallyQueue) return this
-
-    return new Parole((resolve: Function, reject: Function) => {
-      this.finallyQueue?.push(() => {
-        try {
-          onFinally()
-          resolve()
-        } catch (err) {
-          reject(err)
-        }
-      })
-    })
+    return this.then(
+      (x: any) => {
+        onFinally()
+        return x
+      },
+      (reason: any) => {
+        onFinally()
+        throw reason
+      },
+    )
   }
 
   static resolve (x?: any): Parole {
@@ -186,16 +184,43 @@ export class Parole {
 
   static all (list: Thenable[]): Parole {
     const results = new Array(list.length)
+    let ended = false
     let pendingResults: number = list.length
 
     return new Parole((resolve: Function, reject: Function) => {
       iterateListPromises(list, (xthen: Thenable, i: number) => {
         xthen.then((x: any) => {
+          if (ended) return
           results[i] = x
   
           pendingResults && pendingResults--
           if (!pendingResults) resolve(results)
-        }, reject)
+        }, (reason: any) => {
+          ended = true
+          reject(reason)
+        })
+      }, () => resolve([]))
+    })
+  }
+
+  static any (list: Thenable[]): Parole {
+    const rejects = new Array(list.length)
+    let ended = false
+    let pendingResults: number = list.length
+
+    return new Parole((resolve: Function, reject: Function) => {
+      iterateListPromises(list, (xthen: Thenable, i: number) => {
+        xthen.then((x: any) => {
+          ended = true
+          resolve(x)
+        }, (reason: any) => {
+          if (ended) return
+          rejects[i] = reason
+  
+          pendingResults && pendingResults--
+          // @ts-expect-error
+          if (!pendingResults) reject(new AggregateError(rejects))
+        })
       }, () => resolve([]))
     })
   }
