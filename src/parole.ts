@@ -132,3 +132,5 @@ export class Parole extends Future {
     })
   }
 }
+
+export default Parole
