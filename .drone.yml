@@ -3,6 +3,16 @@ kind: pipeline
 name: node14
 
 steps:
+- name: restore-cache
+  image: drillster/drone-volume-cache
+  volumes:
+  - name: cache
+    path: /cache
+  settings:
+    restore: true
+    mount:
+      - ./node_modules
+
 - name: install
   image: node:14
   commands:
@@ -25,3 +35,8 @@ steps:
       from_secret: CODECOV_TOKEN
   commands:
   - make upload.codecov
+
+volumes:
+  - name: cache
+    host:
+      path: /tmp/cache
