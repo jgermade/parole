@@ -55,7 +55,7 @@ test: build test.parole
 test.ci:
 	nyc --reporter=lcov $(MAKE) -j 2 test.defer test.parole
 
-npm.publish:
+publish:
 	npm version $(NPM_VERSION)
 	git push origin $(git_branch)
 	git push --tags
