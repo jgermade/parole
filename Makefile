@@ -25,7 +25,7 @@ build.esm: node_modules
 	esbuild src/* --format=esm --outdir=dist/esm
 
 build: build.cjs build.esm
-	echo "module.exports = require('./dist/cjs/parole.js').default" > dist/cjs/main.js
+	echo "module.exports = require('./parole.js').default" > dist/cjs/main.js
 
 min:
 	@echo "minified version"
