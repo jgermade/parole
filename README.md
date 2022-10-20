@@ -10,6 +10,7 @@ Another ES6 promise implementation ([compliant](https://github.com/promises-aplu
 [![ᴋɪʟᴛ ᴊs](https://jesus.germade.dev/assets/images/badge-kiltjs.svg)](https://github.com/kiltjs)
 [![npm](https://img.shields.io/npm/v/parole.svg)](https://www.npmjs.com/package/parole)
 [![Build Status](https://cloud.drone.io/api/badges/kiltjs/parole/status.svg)](https://cloud.drone.io/kiltjs/parole)
+[![codecov](https://codecov.io/gh/jgermade/parole/branch/master/graph/badge.svg?token=TA3W7MIMB9)](https://codecov.io/gh/jgermade/parole)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Installation
