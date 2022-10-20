@@ -25,6 +25,7 @@ build.esm: node_modules
 	esbuild src/* --format=esm --outdir=dist/esm
 
 build: build.cjs build.esm
+	echo "module.exports = require('./dist/cjs/parole.js').default" > dist/cjs/main.js
 
 min:
 	@echo "minified version"
@@ -55,7 +56,7 @@ test: build test.parole
 test.ci:
 	nyc --reporter=lcov $(MAKE) -j 2 test.defer test.parole
 
-publish:
+publish: build
 	npm version $(NPM_VERSION)
 	git push origin $(git_branch)
 	git push --tags
