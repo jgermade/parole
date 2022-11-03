@@ -109,7 +109,7 @@ export class Parole {
     }
   }
 
-  then (onFulfill: any = null, onReject: any = null): Future {
+  then (onFulfill: any = null, onReject: any = null): Parole {
     return new Parole((resolve: Function, reject: Function) => {
       const thenFulfill = isFunction(onFulfill)
         ? (x: any) => { try { resolve(onFulfill(x)) } catch (err) { reject(err) } }
