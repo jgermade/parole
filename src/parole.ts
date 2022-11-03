@@ -1,10 +1,24 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
-import { Future } from './future'
+import { nextTick } from './nextTick'
 import {
+  isFunction,
+  isObject,
   isIterable,
   isThenable,
 } from './type-cast'
+
+enum FutureStates {
+  PENDING = 'PENDING',
+  FULFILLED = 'FULFILLED',
+  REJECTED = 'REJECTED',
+}
+
+const {
+  PENDING,
+  FULFILLED,
+  REJECTED,
+} = FutureStates
 
 interface DeferredObject {
   promise?: Parole
@@ -25,12 +39,100 @@ function iterateListPromises (iterable: any, eachPromise: Function, cantIterate:
     eachPromise(isThenable(x) ? x : Parole.resolve(x), i)
   })
 }
-export class Parole extends Future {
-  catch (onReject: any = null): Future {
+export class Parole {
+  value: any = null
+  state: FutureStates = PENDING
+  
+  private fulfillQueue: Function[] | null = []
+  private rejectQueue: Function[] | null = []
+
+  private doComplete (value: any, state: FutureStates): void {
+    this.value = value
+    this.state = state
+
+    nextTick(() => {
+      const queue = state === FULFILLED
+        ? this.fulfillQueue
+        : this.rejectQueue
+
+      this.fulfillQueue = null
+      this.rejectQueue = null
+      
+      queue?.forEach((run) => {
+        try {
+          run(value)
+        } catch (err) { /* noop */ }
+      })
+    })
+  }
+
+  private doResolve (x: any): void {
+    let executed = false
+    try {
+      if (x === this) throw new TypeError('resolve value is the promise itself')
+
+      const xThen = x && (isObject(x) || isFunction(x)) && x.then
+
+      if (isFunction(xThen)) {
+        xThen.call(
+          x,
+          (_x: any) => {
+            if (executed) return
+            executed = true
+            this.doResolve(_x)
+          },
+          (_r: any) => {
+            if (executed) return
+            executed = true
+            this.doComplete(_r, REJECTED)
+          },
+        )
+      } else {
+        if (executed) return
+        this.doComplete(x, FULFILLED)
+      }
+    } catch (err) {
+      if (executed) return
+      this.doComplete(err, REJECTED)
+    }
+  }
+
+  private doReject (reason: any): void {
+    this.doComplete(reason, REJECTED)
+  }
+
+  constructor (runFn: Function) {
+    try {
+      runFn(this.doResolve.bind(this), this.doReject.bind(this))
+    } catch (err) {
+      this.doReject(err)
+    }
+  }
+
+  then (onFulfill: any = null, onReject: any = null): Future {
+    return new Parole((resolve: Function, reject: Function) => {
+      const thenFulfill = isFunction(onFulfill)
+        ? (x: any) => { try { resolve(onFulfill(x)) } catch (err) { reject(err) } }
+        : (x: any) => resolve(x)
+
+      const thenReject = isFunction(onReject)
+        ? (x: any) => { try { resolve(onReject(x)) } catch (err) { reject(err) } }
+        : (x: any) => reject(x)
+
+      if (this.state === FULFILLED) nextTick(() => thenFulfill(this.value))
+      else if (this.state === REJECTED) nextTick(() => thenReject(this.value))
+      else {
+        this.fulfillQueue?.push(thenFulfill)
+        this.rejectQueue?.push(thenReject)
+      }
+    })
+  }
+
+  catch (onReject: any = null): Parole {
     return this.then(null, onReject)
   }
 
-  finally (onFinally: any): Future {
+  finally (onFinally: any): Parole {
     return this.then(
       (x: any) => {
         onFinally()
@@ -43,12 +145,12 @@ export class Parole extends Future {
     )
   }
 
-  static resolve (x?: any): Future {
-    return new Future((resolve: Function) => resolve(x))
+  static resolve (x?: any): Parole {
+    return new Parole((resolve: Function) => resolve(x))
   }
 
-  static reject (reason?: any): Future {
-    return new Future((resolve: Function, reject: Function) => reject(reason))
+  static reject (reason?: any): Parole {
+    return new Parole((resolve: Function, reject: Function) => reject(reason))
   }
 
   static defer (): DeferredObject {

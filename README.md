@@ -22,6 +22,7 @@ yarn add parole
 ```
 
 ### ES6 fulfill
+
 > `Parole` implements [ES6 Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) specs
 
 Implements:
