@@ -1,9 +1,6 @@
-# This is a basic workflow that is manually triggered
 
 name: Create Tag
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
   workflow_dispatch:
     inputs:
@@ -15,20 +12,11 @@ on:
         - minor
         - major
         default: 'patch'
-      # commit:
-      #   description: 'Commit to target tag'
-      #   default: 'HEAD'
-      #   required: true
-      #   type: string
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
   bump_version:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - uses: actions/checkout@v3
     - name: setup git config
@@ -38,9 +26,6 @@ jobs:
         git config user.email "<>"
         git config push.default current
         git config pull.default current
-    # Runs a single command using the runners shell
-    - name: Show input
-      run: echo "Hello ${{ inputs.commit }}, branch ${{ github.ref }}, version ${{ inputs.version }}"
     
     - uses: actions/setup-node@v3
       with:
