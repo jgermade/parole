@@ -25,7 +25,7 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: Show input
-      run: echo "Hello ${{ inputs.commit }}, branch ${{ github.ref }}, GITHUB_BASE_REF ${{ vars.GITHUB_ACTION }}"
+      run: echo "Hello ${{ inputs.commit }}, branch ${{ github.ref }}, GITHUB_BASE_REF ${{ github }}"
     
     - uses: actions/checkout@v3
     - run: git config push.default current && git config pull.default current && git pull --tags
