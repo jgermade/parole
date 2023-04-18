@@ -15,11 +15,11 @@ on:
         - minor
         - major
         default: 'patch'
-      commit:
-        description: 'Commit to target tag'
-        default: 'HEAD'
-        required: true
-        type: string
+      # commit:
+      #   description: 'Commit to target tag'
+      #   default: 'HEAD'
+      #   required: true
+      #   type: string
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
