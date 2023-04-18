@@ -41,6 +41,6 @@ jobs:
       with:
         node-version: '14'
 
-    # - run: npm version patch
-    # - run: git push --tags
-    # - run: git push origin/master
+    - run: npm version ${{ inputs.version }}
+    - run: git push --tags
+    - run: git push
