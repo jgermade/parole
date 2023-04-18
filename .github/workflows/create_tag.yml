@@ -6,8 +6,15 @@ name: Create Tag
 # or API.
 on:
   workflow_dispatch:
-    # Inputs the workflow accepts.
     inputs:
+      version:
+        type: choice
+        description: Version to bump
+        options: 
+        - patch
+        - minor
+        - major
+        default: 'patch'
       commit:
         description: 'Commit to target tag'
         default: 'HEAD'
@@ -25,7 +32,7 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: Show input
-      run: echo "Hello ${{ inputs.commit }}, branch ${{ github.ref }}, GITHUB_BASE_REF ${{ github }}"
+      run: echo "Hello ${{ inputs.commit }}, branch ${{ github.ref }}, version ${{ inputs.version }}"
     
     - uses: actions/checkout@v3
     - run: git config push.default current && git config pull.default current && git pull --tags
@@ -33,7 +40,7 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: '14'
-    - run: npm --version
 
+    # - run: npm version patch
     # - run: git push --tags
     # - run: git push origin/master
