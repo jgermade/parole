@@ -30,17 +30,23 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    - name: setup git config
+      run: |
+        # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git config push.default current
+        git config pull.default current
     # Runs a single command using the runners shell
     - name: Show input
       run: echo "Hello ${{ inputs.commit }}, branch ${{ github.ref }}, version ${{ inputs.version }}"
     
     - uses: actions/checkout@v3
-    - run: git config push.default current && git config pull.default current && git pull --tags
-
     - uses: actions/setup-node@v3
       with:
         node-version: '14'
 
+    - run: git pull --tags
     - run: npm version ${{ inputs.version }}
     - run: git push --tags
     - run: git push
