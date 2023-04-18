@@ -35,3 +35,7 @@ jobs:
     - run: npm version ${{ inputs.version }}
     - run: git push --tags
     - run: git push
+
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
