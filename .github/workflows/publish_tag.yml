@@ -1,5 +1,5 @@
 
-name: Create Tag
+name: Publish Tag
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
         default: 'patch'
 
 jobs:
-  bump_version:
+  bump_version_and_publish:
     runs-on: ubuntu-latest
 
     steps:
